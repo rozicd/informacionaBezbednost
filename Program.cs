@@ -1,26 +1,29 @@
+using IB_projekat.Certificates.Repository;
+using IB_projekat.Users.Model;
+using IB_projekat.Users.Repository;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
+using System.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"));
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+app.UseAuthorization();
 
-
-/*app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");*/
 app.MapControllers();
+
 
 app.Run();

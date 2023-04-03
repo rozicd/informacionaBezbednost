@@ -1,4 +1,4 @@
-namespace InformacionaBezbednost
+namespace IB_projekat
 {
     public class WeatherForecast
     {

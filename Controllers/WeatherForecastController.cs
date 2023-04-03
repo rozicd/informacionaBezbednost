@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
-namespace InformacionaBezbednost.Controllers
+namespace IB_projekat.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -28,11 +28,6 @@ namespace InformacionaBezbednost.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
-        }
-        [HttpGet("kurac")]
-        public String GetKurac()
-        {
-            return "kurac";
         }
     }
 }
