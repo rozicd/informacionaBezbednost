@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IB_projekat.Migrations
 {
     /// <inheritdoc />
-    public partial class CertificateUser : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,7 +23,7 @@ namespace IB_projekat.Migrations
                     Surname = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
-                    UserType = table.Column<string>(type: "text", nullable: false)
+                    Role = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,29 +43,17 @@ namespace IB_projekat.Migrations
                     ValidTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     CertificateType = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
-                    AuthenticatedUserId = table.Column<int>(type: "integer", nullable: true)
+                    UserId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Certificates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Certificates_Users_AuthenticatedUserId",
-                        column: x => x.AuthenticatedUserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Certificates_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Certificates_AuthenticatedUserId",
-                table: "Certificates",
-                column: "AuthenticatedUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Certificates_UserId",

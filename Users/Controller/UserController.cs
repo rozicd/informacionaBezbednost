@@ -1,7 +1,11 @@
 ﻿using IB_projekat.Users.Model;
 using IB_projekat.Users.Repository;
+using IB_projekat.Users.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace IB_projekat.Users.Controller
 {
@@ -9,55 +13,78 @@ namespace IB_projekat.Users.Controller
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository<User> _userRepository;
+        private readonly IUserService _userService;
 
-        public UserController(IUserRepository<User> userRepository)
+        public UserController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         [HttpPost]
-        public IActionResult AddUser(User user)
+        public async Task<IActionResult> AddUser(DTOS.CreateUserDTO user)
         {
-            _userRepository.Add(user);
+            await _userService.AddUser(user);
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, User user)
+        [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(int id, User user)
         {
-            var existingUser = _userRepository.GetById(id);
+            var existingUser = await _userService.UpdateUser(id,user);
             if (existingUser == null)
             {
                 return NotFound();
             }
-            existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
-            _userRepository.Update(existingUser);
             return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
-        {
-            var existingUser = _userRepository.GetById(id);
-            if (existingUser == null)
-            {
-                return NotFound();
-            }
-            _userRepository.Delete(existingUser);
-            return Ok();
-        }
-
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
         [HttpGet("{username}/{password}")]
-        public IActionResult Authenticate(string username, string password)
+        public async Task<IActionResult> Authenticate(string username, string password)
         {
-            var user = _userRepository.GetByEmailAndPassword(username, password);
+            var user = await _userService.Authenticate(username, password);
             if (user == null)
             {
                 return Unauthorized();
             }
+
+
+            var claims = new List<Claim>
+            {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
             return Ok(user);
+        }
+
+
+        [HttpGet("admin")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AdminOnly")]
+        public IActionResult GetAdminData()
+        {
+            // Only users with the Admin role can access this action
+            return Ok("Admin data");
+        }
+
+        [HttpGet("authorized")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
+        public IActionResult GetAuthorizedData()
+        {
+            // Only users with the Authorized or Admin role can access this action
+            return Ok("Authorized data");
         }
     }
 }

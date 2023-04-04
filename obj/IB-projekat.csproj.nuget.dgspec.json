@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\erdel\\source\\repos\\IB-projekat\\IB-projekat\\IB-projekat.csproj": {}
+    "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj": {}
   },
   "projects": {
-    "C:\\Users\\erdel\\source\\repos\\IB-projekat\\IB-projekat\\IB-projekat.csproj": {
+    "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\erdel\\source\\repos\\IB-projekat\\IB-projekat\\IB-projekat.csproj",
+        "projectUniqueName": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj",
         "projectName": "IB-projekat",
-        "projectPath": "C:\\Users\\erdel\\source\\repos\\IB-projekat\\IB-projekat\\IB-projekat.csproj",
+        "projectPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj",
         "packagesPath": "C:\\Users\\erdel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\erdel\\source\\repos\\IB-projekat\\IB-projekat\\obj\\",
+        "outputPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -58,9 +58,21 @@
               "target": "Package",
               "version": "[7.0.4, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Npgsql.EntityFrameworkCore.PostgreSQL": {
               "target": "Package",
               "version": "[7.0.3, )"
+            },
+            "System.Security.Cryptography.ProtectedData": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
+            "System.Security.Cryptography.X509Certificates": {
+              "target": "Package",
+              "version": "[4.3.2, )"
             }
           },
           "imports": [

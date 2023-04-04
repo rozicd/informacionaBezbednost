@@ -30,9 +30,6 @@ namespace IB_projekat.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AuthenticatedUserId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CertificateType")
                         .HasColumnType("integer");
 
@@ -51,6 +48,9 @@ namespace IB_projekat.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("ValidFrom")
                         .HasColumnType("timestamp with time zone");
 
@@ -59,7 +59,7 @@ namespace IB_projekat.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthenticatedUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Certificates");
                 });
@@ -88,52 +88,26 @@ namespace IB_projekat.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("UserType")
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("UserType").HasValue("User");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.AuthenticatedUser", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.User");
-
-                    b.HasDiscriminator().HasValue("Authorized");
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.UnauthenticatedUser", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.User");
-
-                    b.HasDiscriminator().HasValue("Unauthorized");
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.Admin", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.AuthenticatedUser");
-
-                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("IB_projekat.Certificates.Model.Certificate", b =>
                 {
-                    b.HasOne("IB_projekat.Users.Model.AuthenticatedUser", null)
+                    b.HasOne("IB_projekat.Users.Model.User", null)
                         .WithMany("Certificates")
-                        .HasForeignKey("AuthenticatedUserId");
+                        .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("IB_projekat.Users.Model.AuthenticatedUser", b =>
+            modelBuilder.Entity("IB_projekat.Users.Model.User", b =>
                 {
                     b.Navigation("Certificates");
                 });

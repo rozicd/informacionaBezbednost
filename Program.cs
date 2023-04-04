@@ -1,9 +1,12 @@
 using IB_projekat.Certificates.Repository;
 using IB_projekat.Users.Model;
 using IB_projekat.Users.Repository;
+using IB_projekat.Users.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
 using Npgsql;
+using System.Configuration;
 using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,12 +17,51 @@ builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
 
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Events = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = (int)System.Net.HttpStatusCode.Unauthorized;
+                return Task.CompletedTask;
+            },
+            OnRedirectToAccessDenied = context =>
+            {
+                context.Response.StatusCode = (int)System.Net.HttpStatusCode.Forbidden;
+                return Task.CompletedTask;
+            }
+        };
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+    {
+        policy.RequireRole(UserType.Admin.ToString());
+    });
+    options.AddPolicy("AuthorizedOnly", policy =>
+    {
+        policy.RequireRole(UserType.Authorized.ToString(), UserType.Admin.ToString());
+    });
+});
+
+var configuration = builder.Configuration;
+builder.Services.AddSingleton<IConfiguration>(configuration);
 
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
