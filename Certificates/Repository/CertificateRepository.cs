@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace IB_projekat.Certificates.Repository
 {
     public class CertificateRepository : ICertificateRepository
@@ -18,37 +20,42 @@ namespace IB_projekat.Certificates.Repository
             return _context.Certificates.FirstOrDefault(c => c.Id == id);
         }
 
-        public IEnumerable<Certificate> GetAll()
+        public async Task<IEnumerable<Certificate>> GetAll()
         {
-            return _context.Certificates.ToList();
+            return await  _context.Certificates.ToListAsync();
         }
 
-        public IEnumerable<Certificate> GetAllEndCertificates()
+        public async Task<IEnumerable<Certificate>> GetAllEndCertificates()
         {
-            return _context.Certificates.Where(c => c.CertificateType == CertificateType.End).ToList();
+            return await _context.Certificates.Where(c => c.CertificateType == CertificateType.End).ToListAsync();
         }
 
-        public IEnumerable<Certificate> GetAllIntermediateCertificates()
+        public async Task<IEnumerable<Certificate>> GetAllIntermediateCertificates()
         {
-            return _context.Certificates.Where(c => c.CertificateType == CertificateType.Intermediate).ToList();
+            return await _context.Certificates.Where(c => c.CertificateType == CertificateType.Intermediate).ToListAsync();
         }
 
-        public void Add(Certificate certificate)
+        public async Task Add(Certificate certificate)
         {
-            _context.Certificates.Add(certificate);
-            _context.SaveChanges();
+            await _context.Certificates.AddAsync(certificate);
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(Certificate certificate)
+        public async Task Update(Certificate certificate)
         {
             _context.Certificates.Update(certificate);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(Certificate certificate)
+        public async Task Delete(Certificate certificate)
         {
             _context.Certificates.Remove(certificate);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+        }
+
+        public Certificate GetBySerialNumber(string serialNumber)
+        {
+            return _context.Certificates.FirstOrDefault(c => c.SerialNumber == serialNumber);
         }
     }
 }
