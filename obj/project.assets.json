@@ -3625,24 +3625,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\erdel\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Dusan\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj",
+      "projectUniqueName": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\IB-projekat.csproj",
       "projectName": "IB-projekat",
-      "projectPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\IB-projekat.csproj",
-      "packagesPath": "C:\\Users\\erdel\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\New folder (14)\\obj\\",
+      "projectPath": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\IB-projekat.csproj",
+      "packagesPath": "C:\\Users\\Dusan\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\erdel\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Users\\Dusan\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [

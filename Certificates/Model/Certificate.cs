@@ -12,6 +12,7 @@ namespace IB_projekat.Certificates.Model
         public DateTime ValidTo { get; set; }
         public CertificateStatus Status { get; set; }
         public CertificateType CertificateType { get; set; }
+        public User User { get; set; }
     }
 
     public enum CertificateStatus
