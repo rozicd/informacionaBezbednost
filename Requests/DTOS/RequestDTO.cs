@@ -7,6 +7,7 @@ namespace IB_projekat.Certificates.DTOS
     {
         public CertificateType CertificateType { get; set; }
         public string SignitureSerialNumber { get; set; }
-        public User User { get; set; }
+        public int UserId { get; set; }
+        public string Flags { get; set; }
     }
 }
