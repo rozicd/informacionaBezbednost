@@ -26,8 +26,7 @@ namespace IB_projekat.Requests.Repository
 
         public async Task<Request> GetById(int id)
         {
-            return await _context.Requests.FirstOrDefaultAsync(r => r.Id == id);
-
+            return await _context.Requests.Include(u=>u.User).FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<IEnumerable<Request>> GetByUserId(int id)
@@ -41,9 +40,5 @@ namespace IB_projekat.Requests.Repository
             await _context.SaveChangesAsync();
         }
 
-        Task<Request> IRequestRepository.GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

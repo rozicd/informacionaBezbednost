@@ -16,6 +16,10 @@ namespace IB_projekat
         {
         }
 
+        public DatabaseContext()
+        {
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 

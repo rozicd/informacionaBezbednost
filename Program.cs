@@ -17,7 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;"), ServiceLifetime.Scoped);
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"), ServiceLifetime.Singleton);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
 builder.Services.AddScoped<IUserService, UserService>();
