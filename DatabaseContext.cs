@@ -16,20 +16,6 @@ namespace IB_projekat
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Admin>()
-                .HasBaseType<AuthenticatedUser>()
-                .HasDiscriminator<string>("UserType")
-                .HasValue<Admin>("Admin");
-
-            modelBuilder.Entity<AuthenticatedUser>()
-                .HasBaseType<User>()
-                .HasDiscriminator<string>("UserType")
-                .HasValue<AuthenticatedUser>("Authorized");
-
-            modelBuilder.Entity<UnauthenticatedUser>()
-                .HasBaseType<User>()
-                .HasDiscriminator<string>("UserType")
-                .HasValue<UnauthenticatedUser>("Unauthorized");
 
             base.OnModelCreating(modelBuilder);
         }

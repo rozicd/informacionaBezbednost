@@ -8,20 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Users\Model\Admin.cs" />
+    <Compile Remove="Users\Model\AuthenticatedUser.cs" />
+    <Compile Remove="Users\Model\UnauthenticatedUser.cs" />
+    <Compile Remove="Users\Service\CookieService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="7.0.1" />
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.2" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Certificates\Controller\" />
     <Folder Include="Certificates\Service\" />
-    <Folder Include="Migrations\" />
-    <Folder Include="Users\Service\" />
   </ItemGroup>
 
 </Project>

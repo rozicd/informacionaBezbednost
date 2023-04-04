@@ -5,7 +5,7 @@
 namespace IB_projekat.Migrations
 {
     /// <inheritdoc />
-    public partial class CertificateUser3 : Migration
+    public partial class UserCert1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

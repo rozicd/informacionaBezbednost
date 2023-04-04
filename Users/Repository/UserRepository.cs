@@ -16,19 +16,19 @@ namespace IB_projekat.Users.Repository
             _users = context.Set<T>();
         }
 
-        public T GetByEmailAndPassword(string email, string password)
+        public async Task<T> GetByEmailAndPassword(string email, string password)
         {
-            return _users.FirstOrDefault(u => u.Email == email && u.Password == password);
+            return await _users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
 
-        public T GetById(int id)
+        public async Task<T> GetById(int id)
         {
-            return _users.FirstOrDefault(u => u.Id == id);
+            return await _users.FirstOrDefaultAsync(u => u.Id == id);
         }
-
-        public IEnumerable<T> GetAll()
+        
+        public async Task<IEnumerable<T>> GetAll()
         {
-            return _users.ToList();
+            return await _users.ToListAsync();
         }
 
         public async Task Add(T user)
