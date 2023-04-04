@@ -3625,19 +3625,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Dusan\\.nuget\\packages\\": {}
+    "C:\\Users\\ognje\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\IB-projekat.csproj",
+      "projectUniqueName": "D:\\Fakultet\\IB\\Proj\\IB-projekat.csproj",
       "projectName": "IB-projekat",
-      "projectPath": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\IB-projekat.csproj",
-      "packagesPath": "C:\\Users\\Dusan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Dusan\\Desktop\\VI_semestar\\IB\\IBProjekat\\obj\\",
+      "projectPath": "D:\\Fakultet\\IB\\Proj\\IB-projekat.csproj",
+      "packagesPath": "C:\\Users\\ognje\\.nuget\\packages\\",
+      "outputPath": "D:\\Fakultet\\IB\\Proj\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Dusan\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ognje\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3700,7 +3700,8 @@
           "net47",
           "net471",
           "net472",
-          "net48"
+          "net48",
+          "net481"
         ],
         "assetTargetFallback": true,
         "warn": true,
@@ -3712,7 +3713,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.300\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.407\\RuntimeIdentifierGraph.json"
       }
     }
   }

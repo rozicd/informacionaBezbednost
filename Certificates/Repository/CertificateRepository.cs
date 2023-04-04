@@ -9,10 +9,12 @@ namespace IB_projekat.Certificates.Repository
     public class CertificateRepository : ICertificateRepository
     {
         private readonly DatabaseContext _context;
+        private readonly DbSet<Certificate> _certs;
 
         public CertificateRepository(DatabaseContext context)
         {
             _context = context;
+            _certs = context.Set<Certificate>();
         }
 
         public Certificate GetById(int id)
@@ -37,8 +39,15 @@ namespace IB_projekat.Certificates.Repository
 
         public async Task Add(Certificate certificate)
         {
-            await _context.Certificates.AddAsync(certificate);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _certs.AddAsync(certificate);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         public async Task Update(Certificate certificate)

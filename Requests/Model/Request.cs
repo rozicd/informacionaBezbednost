@@ -11,6 +11,7 @@ namespace IB_projekat.Requests.Model
         public string SignitureSerialNumber { get; set; }
         public User User { get; set; }
         public Status Status { get; set; }
+        public string Flags { get; set; }
 
         
     }

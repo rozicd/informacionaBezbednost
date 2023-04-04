@@ -9,18 +9,22 @@ using Npgsql;
 using System.Configuration;
 using System.Data;
 using IB_projekat.Certificates.Service;
+using IB_projekat.Requests.Service;
+using IB_projekat.Requests.Model.Repository;
+using IB_projekat.Requests.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=Dusan;Password=123;"));
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;"), ServiceLifetime.Scoped);
 
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
-builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)

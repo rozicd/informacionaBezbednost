@@ -75,6 +75,10 @@ namespace IB_projekat.Migrations
                     b.Property<int>("CertificateType")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Flags")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("SignitureSerialNumber")
                         .IsRequired()
                         .HasColumnType("text");
