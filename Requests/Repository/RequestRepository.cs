@@ -24,9 +24,9 @@ namespace IB_projekat.Requests.Repository
             return await _context.Requests.ToListAsync();
         }
 
-        public Request GetById(int id)
+        public async Task<Request> GetById(int id)
         {
-            return _context.Requests.FirstOrDefault(r => r.Id == id);
+            return await _context.Requests.FirstOrDefaultAsync(r => r.Id == id);
 
         }
 
@@ -39,6 +39,11 @@ namespace IB_projekat.Requests.Repository
         {
             _context.Requests.Update(request);
             await _context.SaveChangesAsync();
+        }
+
+        Task<Request> IRequestRepository.GetById(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
