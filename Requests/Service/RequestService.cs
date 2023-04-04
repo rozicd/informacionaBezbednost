@@ -33,14 +33,10 @@ namespace IB_projekat.Requests.Service
             _userRepository = userRepository;
         }
 
-        public async Task Accept(RequestDTO requestDTO)
+        public async Task Accept(int certId)
         {
-            Request request = new Request();
-            request.SignitureSerialNumber = requestDTO.SignitureSerialNumber;
-            request.CertificateType = requestDTO.CertificateType;
-            request.User = _userRepository.GetById(requestDTO.UserId).Result;
+            Request request = await _requestRepository.GetById(certId);
             request.Status = Status.Accepted;
-            request.Flags = requestDTO.Flags;
             await _requestRepository.Update(request);
             IssueCertificate(request.SignitureSerialNumber, request.User, request.Flags, DateTime.Now.AddHours(100000));
         }
@@ -142,7 +138,7 @@ namespace IB_projekat.Requests.Service
             await _requestRepository.Add(request);
             if (string.IsNullOrEmpty(request.SignitureSerialNumber))
             {
-                Accept(requestDTO);
+                Accept(request.Id);
 
             }
             else 
@@ -151,17 +147,14 @@ namespace IB_projekat.Requests.Service
             Certificate certificate = _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
             if (request.User.Id == certificate.User.Id)
             {
-                Accept(requestDTO);
+                Accept(request.Id);
             }
             }
         }
 
-        public async Task Decline(RequestDTO requestDTO)
+        public async Task Decline(int certId)
         {
-            Request request = new Request();
-            request.SignitureSerialNumber = requestDTO.SignitureSerialNumber;
-            request.CertificateType = requestDTO.CertificateType;
-            request.User = _userRepository.GetById(requestDTO.UserId).Result;
+            Request request = await _requestRepository.GetById(certId);
             request.Status = Status.Declined;
             await _requestRepository.Update(request);
         }

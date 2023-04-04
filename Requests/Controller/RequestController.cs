@@ -23,17 +23,17 @@ namespace IB_projekat.Requests.Controller
             return Ok();
         }
 
-        [HttpPut("accept")]
-        public async Task<IActionResult> AcceptRequest(RequestDTO requestDTO)
+        [HttpPut("accept/{certId}")]
+        public async Task<IActionResult> AcceptRequest(int certId)
         {
-            await _requestService.Accept(requestDTO);
+            await _requestService.Accept(certId);
             return Ok();
         }
 
-        [HttpPut("decline")]
-        public async Task<IActionResult> DeclineRequest(RequestDTO requestDTO)
+        [HttpPut("decline/{certId}")]
+        public async Task<IActionResult> DeclineRequest(int certId)
         {
-            await _requestService.Decline(requestDTO);
+            await _requestService.Decline(certId);
             return Ok();
         }
         [HttpGet("{userId}")]

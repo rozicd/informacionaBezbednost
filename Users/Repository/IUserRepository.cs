@@ -6,7 +6,7 @@ namespace IB_projekat.Users.Repository
     {
         Task<T> GetByEmailAndPassword(string email, string password);
         Task<IEnumerable<T>> GetAll();
-        public Task<T> GetById(int id);
+        Task<T> GetById(int id);
         Task Add(T user);
         Task Update(T user);
         Task Delete(T user);
