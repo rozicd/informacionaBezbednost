@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mTZNl1/7Qgr9khhtKJgiN8onBGVubGVMhOe3RsGVSsdVvXndIHRo6mpKnlM/S5oN/ijXsjjmmAjmlSNg5/xNaw==",
+  "dgSpecHash": "sL15nNg3/31suPGpqr3z7dzydsMzV2XYApTuwVWPO7M/wzLWfH1h8hD1fw5ZiMPa5t8p+LvoH2HgjoeG3rsE8g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\IB-projekat.csproj",
+  "projectFilePath": "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\IB-projekat.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\erdel\\.nuget\\packages\\dapper\\2.0.123\\dapper.2.0.123.nupkg.sha512",
     "C:\\Users\\erdel\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

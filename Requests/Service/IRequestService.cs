@@ -7,7 +7,6 @@ namespace IB_projekat.Requests.Service
     {
         Task Accept(int certId);
         Task Decline(int certId);
-
         Task Create(RequestDTO requestDTO);
         Task<IEnumerable<Request>> GetByUserId(int id);
 

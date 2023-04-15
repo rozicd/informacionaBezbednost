@@ -3,6 +3,7 @@ using System;
 using IB_projekat;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace IB_projekat.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20230415172353_NewMigration2")]
+    partial class NewMigration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,7 +137,7 @@ namespace IB_projekat.Migrations
             modelBuilder.Entity("IB_projekat.Certificates.Model.Certificate", b =>
                 {
                     b.HasOne("IB_projekat.Users.Model.User", "User")
-                        .WithMany()
+                        .WithMany("Certificates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -151,6 +154,11 @@ namespace IB_projekat.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IB_projekat.Users.Model.User", b =>
+                {
+                    b.Navigation("Certificates");
                 });
 #pragma warning restore 612, 618
         }

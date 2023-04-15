@@ -22,6 +22,14 @@ namespace IB_projekat
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Certificate>(entity =>
+            {
+
+                // make Issuer nullable
+                entity.Property(e => e.Issuer)
+                    .IsRequired(false) // make Issuer nullable
+                    .HasDefaultValue(null);
+            });
 
             base.OnModelCreating(modelBuilder);
         }

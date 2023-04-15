@@ -23,7 +23,7 @@ namespace IB_projekat.Users.Repository
 
         public async Task<T> GetById(int id)
         {
-            return await _users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _users.FirstOrDefaultAsync(user=> user.Id == id);
         }
         
         public async Task<IEnumerable<T>> GetAll()

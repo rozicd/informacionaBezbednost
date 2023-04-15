@@ -41,7 +41,8 @@ namespace IB_projekat.Certificates.Repository
         {
             try
             {
-                await _certs.AddAsync(certificate);
+                _context.Attach(certificate.User);
+                await _context.Certificates.AddAsync(certificate);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -62,9 +63,9 @@ namespace IB_projekat.Certificates.Repository
             await _context.SaveChangesAsync();
         }
 
-        public Certificate GetBySerialNumber(string serialNumber)
+        public async Task<Certificate> GetBySerialNumber(string serialNumber)
         {
-            return _context.Certificates.FirstOrDefault(c => c.SerialNumber == serialNumber);
+            return await _context.Certificates.Include(c => c.User).FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
         }
     }
 }
