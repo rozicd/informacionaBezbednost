@@ -39,16 +39,11 @@ namespace IB_projekat.Certificates.Repository
 
         public async Task Add(Certificate certificate)
         {
-            try
-            {
-                _context.Attach(certificate.User);
-                await _context.Certificates.AddAsync(certificate);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            var user = await _context.Users.FindAsync(certificate.User.Id); 
+            certificate.User = _context.Entry(user).IsKeySet ? user : _context.Users.Attach(user).Entity;
+            await _context.Certificates.AddAsync(certificate);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task Update(Certificate certificate)

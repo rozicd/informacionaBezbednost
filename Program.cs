@@ -26,7 +26,17 @@ builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
+            .WithOrigins("http://localhost:3000")
+            .AllowCredentials()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -75,5 +85,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseCors();
 
 app.Run();

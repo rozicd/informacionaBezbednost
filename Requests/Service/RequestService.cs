@@ -53,15 +53,16 @@ namespace IB_projekat.Requests.Service
                 await Accept(request.Id);
 
             }
-            else 
+            else
             {
-            
-            Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
+                await Accept(request.Id);
+            }
+            /*Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
             if (request.User.Id == certificate.User.Id)
             {
                 await Accept(request.Id);
             }
-            }
+            }*/
         }
 
         public async Task Decline(int certId)
