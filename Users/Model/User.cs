@@ -11,7 +11,6 @@ namespace IB_projekat.Users.Model
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
         public UserType Role { get; set; }
-        public ICollection<Certificate>? Certificates { get; set; }
 
     }
 

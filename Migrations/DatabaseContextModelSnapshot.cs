@@ -34,7 +34,6 @@ namespace IB_projekat.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Issuer")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SerialNumber")
@@ -52,10 +51,10 @@ namespace IB_projekat.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ValidTo")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
@@ -135,7 +134,7 @@ namespace IB_projekat.Migrations
             modelBuilder.Entity("IB_projekat.Certificates.Model.Certificate", b =>
                 {
                     b.HasOne("IB_projekat.Users.Model.User", "User")
-                        .WithMany("Certificates")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -152,11 +151,6 @@ namespace IB_projekat.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.User", b =>
-                {
-                    b.Navigation("Certificates");
                 });
 #pragma warning restore 612, 618
         }

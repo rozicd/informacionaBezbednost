@@ -15,6 +15,7 @@ namespace IB_projekat.Requests.Repository
 
         public async Task Add(Request request)
         {
+            _context.Users.Attach(request.User);
             await _context.Requests.AddAsync(request);
             await _context.SaveChangesAsync();
         }

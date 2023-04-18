@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\IB-projekat.csproj": {}
+    "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\IB-projekat.csproj": {}
   },
   "projects": {
-    "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\IB-projekat.csproj": {
+    "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\IB-projekat.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\IB-projekat.csproj",
+        "projectUniqueName": "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\IB-projekat.csproj",
         "projectName": "IB-projekat",
-        "projectPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\IB-projekat.csproj",
+        "projectPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\IB-projekat.csproj",
         "packagesPath": "C:\\Users\\erdel\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\novi_IB\\obj\\",
+        "outputPath": "C:\\Users\\erdel\\OneDrive\\Desktop\\najnoviji_ib\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

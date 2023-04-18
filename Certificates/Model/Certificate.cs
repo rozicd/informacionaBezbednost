@@ -7,7 +7,7 @@ namespace IB_projekat.Certificates.Model
         public int Id { get; set; }
         public string SerialNumber { get; set; }
         public string SignatureAlgorithm { get; set; }
-        public string Issuer { get; set; }
+        public string? Issuer { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
         public CertificateStatus Status { get; set; }

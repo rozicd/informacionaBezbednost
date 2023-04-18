@@ -39,15 +39,11 @@ namespace IB_projekat.Certificates.Repository
 
         public async Task Add(Certificate certificate)
         {
-            try
-            {
-                await _certs.AddAsync(certificate);
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            var user = await _context.Users.FindAsync(certificate.User.Id); 
+            certificate.User = _context.Entry(user).IsKeySet ? user : _context.Users.Attach(user).Entity;
+            await _context.Certificates.AddAsync(certificate);
+            await _context.SaveChangesAsync();
+
         }
 
         public async Task Update(Certificate certificate)
@@ -62,9 +58,9 @@ namespace IB_projekat.Certificates.Repository
             await _context.SaveChangesAsync();
         }
 
-        public Certificate GetBySerialNumber(string serialNumber)
+        public async Task<Certificate> GetBySerialNumber(string serialNumber)
         {
-            return _context.Certificates.FirstOrDefault(c => c.SerialNumber == serialNumber);
+            return await _context.Certificates.Include(c => c.User).FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
         }
     }
 }

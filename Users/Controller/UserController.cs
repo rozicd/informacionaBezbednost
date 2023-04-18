@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using IB_projekat.Users.DTOS;
 
 namespace IB_projekat.Users.Controller
 {
@@ -40,24 +41,28 @@ namespace IB_projekat.Users.Controller
         }
 
         [Microsoft.AspNetCore.Authorization.AllowAnonymous]
-        [HttpGet("{username}/{password}")]
-        public async Task<IActionResult> Authenticate(string username, string password)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            var user = await _userService.Authenticate(username, password);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = await _userService.Authenticate(model.Username, model.Password);
             if (user == null)
             {
                 return Unauthorized();
             }
 
-
             var claims = new List<Claim>
             {
-            new Claim(ClaimTypes.Name, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties
+            var authProperties = new AuthenticationProperties
             {
                 ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
             };
