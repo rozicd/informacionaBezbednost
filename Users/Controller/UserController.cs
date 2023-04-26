@@ -21,11 +21,19 @@ namespace IB_projekat.Users.Controller
             _userService = userService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> AddUser(DTOS.CreateUserDTO user)
         {
-            await _userService.AddUser(user);
-            return Ok();
+            if (!_userService.UserExists(user.Email).Result)
+            {
+                await _userService.AddUser(user);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("USER WITH THIS EMAIL ALREADY EXIST, IDIOT!!!!");
+            }
+            
         }
 
         [HttpPut("{id}")]

@@ -38,6 +38,10 @@ export default function LoginPage() {
     setPassword(event.target.value);
   };
 
+  const handleRegisterClick = () => {
+    window.location.href = '/register';
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -64,7 +68,11 @@ export default function LoginPage() {
           {errorMessage && <p className={styles.error}>{errorMessage}</p>}
           <div className={styles.center}>
             <button type="submit" className={styles.button}>OK</button>
+            <button type="button" className={styles.button} onClick={handleRegisterClick}>
+              Register
+            </button>
           </div>
+
         </form>
       </main>
     </div>
