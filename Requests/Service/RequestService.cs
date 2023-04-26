@@ -74,7 +74,7 @@ namespace IB_projekat.Requests.Service
 
         public async Task<IEnumerable<Request>> GetByUserId(int id)
         {
-            return await _requestRepository.GetByUserId(id);
+            return await _requestRepository.GetByUsersId(id);
         }
 
         

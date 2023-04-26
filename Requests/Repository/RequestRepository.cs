@@ -30,7 +30,7 @@ namespace IB_projekat.Requests.Repository
             return await _context.Requests.Include(u=>u.User).FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<IEnumerable<Request>> GetByUserId(int id)
+        public async Task<IEnumerable<Request>> GetByUsersId(int id)
         {
             return await _context.Requests.Where(r => r.User.Id == id).ToListAsync();
         }

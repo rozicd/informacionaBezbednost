@@ -48,5 +48,10 @@ namespace IB_projekat.Users.Repository
             _users.Remove(user);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<T> GetByEmail(string email)
+        {
+            return await _users.FirstOrDefaultAsync(u => u.Email == email);
+        }
     }
 }

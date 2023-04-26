@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using IB_projekat.Users.DTOS;
+using IB_projekat.ActivationTokens.Service;
+using IB_projekat.ActivationTokens.Model;
 
 namespace IB_projekat.Users.Controller
 {
@@ -15,17 +17,27 @@ namespace IB_projekat.Users.Controller
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IActivationTokenService _activationTokenService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IActivationTokenService activationTokenService)
         {
             _userService = userService;
+            _activationTokenService = activationTokenService;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> AddUser(DTOS.CreateUserDTO user)
         {
-            await _userService.AddUser(user);
-            return Ok();
+            if (!_userService.UserExists(user.Email).Result)
+            {
+                await _userService.AddUser(user);
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("USER WITH THIS EMAIL ALREADY EXIST, IDIOT!!!!");
+            }
+            
         }
 
         [HttpPut("{id}")]
@@ -91,5 +103,45 @@ namespace IB_projekat.Users.Controller
             // Only users with the Authorized or Admin role can access this action
             return Ok("Authorized data");
         }
+
+        [HttpPut("activate/{id}/{token}")]
+        public async Task<IActionResult> ActivateUserAsync(int id, string token)
+        {
+
+            User user = await _userService.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            List<ActivationToken> activationTokens = await _activationTokenService.getTokenByUserId(id);
+            var validTokenFound = false;
+            foreach (var activationToken in activationTokens)
+            {
+                if (activationToken.expires >= DateTime.Now && _activationTokenService.VerifyToken(token, activationToken.hash))
+                {
+                    validTokenFound = true;
+                    break;
+                }
+            }
+            if (!validTokenFound)
+            {
+                return BadRequest("Invalid or expired activation token");
+            }
+
+            // Activate the user account
+            user.Role = UserType.Authorized;
+            await _userService.UpdateUser(user.Id, user);
+
+            // Delete the activation token(s)
+            foreach (var activationToken in activationTokens)
+            {
+                await _activationTokenService.RemoveToken(activationToken);
+            }
+
+            return Ok();
+        }
+
+
+
     }
 }

@@ -1,0 +1,16 @@
+
+
+.main {
+    background-color: #c0c0c0;
+    border: 5px solid #008080;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #a0a0a0;
+    padding: 50px;
+    padding-left: 70px;
+    padding-right: 70px;
+    width: 80%;
+    position: relative;
+    margin-top: 5%;
+    left: 10%;
+  }
+  
