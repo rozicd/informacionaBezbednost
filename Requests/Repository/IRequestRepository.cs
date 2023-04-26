@@ -6,6 +6,6 @@
         Task Add(Request request);
         Task Update(Request request);
         Task<IEnumerable<Request>> GetAll();
-        Task<IEnumerable<Request>> GetByUserId(int id);
+        Task<IEnumerable<Request>> GetByUsersId(int id);
     }
 }

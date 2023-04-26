@@ -12,6 +12,8 @@ using IB_projekat.Certificates.Service;
 using IB_projekat.Requests.Service;
 using IB_projekat.Requests.Model.Repository;
 using IB_projekat.Requests.Repository;
+using IB_projekat.ActivationTokens.Repository;
+using IB_projekat.ActivationTokens.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,9 @@ builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
+builder.Services.AddScoped<IActivationTokenService, ActivationTokenService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>

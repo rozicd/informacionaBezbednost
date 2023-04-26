@@ -6,21 +6,30 @@ namespace IB_projekat.ActivationTokens.Repository
 {
     public class ActivationTokenRepository : IActivationTokenRepository
     {
+        private readonly DatabaseContext _context;
 
-        public Task AddOne(ActivationTokenDTO activationTokenDTO)
+        public ActivationTokenRepository(DatabaseContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+
+        public async Task AddOne(ActivationToken activationToken)
+        {
+            await _context.ActivationTokens.AddAsync(activationToken);
+            await _context.SaveChangesAsync();
 
         }
 
-        public Task DeleteOne(int id)
+        public async Task DeleteOne(ActivationToken activationToken)
         {
-            throw new NotImplementedException();
+            _context.ActivationTokens.Remove(activationToken);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<ActivationToken> GetByValue(string value)
+        public async Task<List<ActivationToken>> GetByUserId(int id)
         {
-            throw new NotImplementedException();
+            return await _context.ActivationTokens.Where(r => r.userId == id).ToListAsync();
         }
+
     }
 }

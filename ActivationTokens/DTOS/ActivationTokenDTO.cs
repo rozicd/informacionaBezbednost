@@ -2,6 +2,8 @@
 {
     public class ActivationTokenDTO
     {
-        public string value;
+        public string value { get; set; }
+        public DateTime expires { get; set; }
+        public int userId { get; set; }
     }
 }

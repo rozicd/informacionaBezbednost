@@ -8,5 +8,7 @@ namespace IB_projekat.Users.Service
         Task<User> UpdateUser(int id, User user);
         Task<User> Authenticate(string username, string password);
         Task<bool> UserExists(string email);
+        Task<User> GetById(int id);
+        
     }
 }

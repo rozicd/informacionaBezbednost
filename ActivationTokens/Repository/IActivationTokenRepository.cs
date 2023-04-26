@@ -5,8 +5,9 @@ namespace IB_projekat.ActivationTokens.Repository
 {
     public interface IActivationTokenRepository
     {
-        Task<ActivationToken> GetByValue(string value);
-        Task AddOne(ActivationTokenDTO activationTokenDTO);
-        Task DeleteOne(int id);
+        Task AddOne(ActivationToken activationToken);
+        Task DeleteOne(ActivationToken activationToken);
+
+        Task<List<ActivationToken>> GetByUserId(int id);
     }
 }
