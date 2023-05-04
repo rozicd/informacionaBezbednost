@@ -56,7 +56,7 @@ namespace IB_projekat.Users.Service
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("ibprojekat@gmail.com", "IB support");
             var subject = "Test";
-            var to = new EmailAddress("sanduzicro19@gmail.com", "Example User");
+            var to = new EmailAddress(user.Email, "Example User");
             var plainTextContent = "test";
             var htmlContent = File.ReadAllText("Resources/accountActivation.html");
             var newHtmlContent = htmlContent.Replace("{{action_url}}", "http://localhost:3000/activate?id="+user.Id+"&token="+token.value);

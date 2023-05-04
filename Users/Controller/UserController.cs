@@ -28,6 +28,7 @@ namespace IB_projekat.Users.Controller
         [HttpPost("register")]
         public async Task<IActionResult> AddUser(DTOS.CreateUserDTO user)
         {
+
             if (!_userService.UserExists(user.Email).Result)
             {
                 await _userService.AddUser(user);
@@ -35,7 +36,7 @@ namespace IB_projekat.Users.Controller
             }
             else
             {
-                return BadRequest("USER WITH THIS EMAIL ALREADY EXIST, IDIOT!!!!");
+                return Conflict("USER WITH THIS EMAIL ALREADY EXISTS");
             }
             
         }
@@ -88,19 +89,11 @@ namespace IB_projekat.Users.Controller
         }
 
 
-        [HttpGet("admin")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AdminOnly")]
-        public IActionResult GetAdminData()
-        {
-            // Only users with the Admin role can access this action
-            return Ok("Admin data");
-        }
-
         [HttpGet("authorized")]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public IActionResult GetAuthorizedData()
         {
-            // Only users with the Authorized or Admin role can access this action
+               // Only users with the Authorized or Admin role can access this action
             return Ok("Authorized data");
         }
 
@@ -141,7 +134,16 @@ namespace IB_projekat.Users.Controller
             return Ok();
         }
 
+        [HttpPost("logout")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
+        }
+
 
 
     }
+
 }
