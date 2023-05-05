@@ -8,5 +8,6 @@ namespace IB_projekat.Certificates.Service
         Task<IEnumerable<Certificate>> GetAll();
         Task<bool> VerifyCertificate(string certificateSerialNumber);
         Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo);
+        Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize);
     }
 }

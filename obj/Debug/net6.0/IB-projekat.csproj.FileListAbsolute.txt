@@ -280,9 +280,6 @@ C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\obj\Debug\net6.0\refint\IB-projekat
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\obj\Debug\net6.0\IB-projekat.pdb
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\obj\Debug\net6.0\IB-projekat.genruntimeconfig.cache
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\obj\Debug\net6.0\ref\IB-projekat.dll
-C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\ib-client\jsconfig.json
-C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\ib-client\package-lock.json
-C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\ib-client\package.json
 C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\SendGrid.dll
 C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\StarkbankEcdsa.dll
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\package-lock.json
@@ -290,3 +287,6 @@ C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\package.jso
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\public\manifest.json
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\SendGrid.dll
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\StarkbankEcdsa.dll
+C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\package-lock.json
+C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\package.json
+C:\Users\Dusan\Desktop\VI_semestar\IB\IBProjekat\bin\Debug\net6.0\client\public\manifest.json

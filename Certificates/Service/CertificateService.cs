@@ -170,5 +170,10 @@ namespace IB_projekat.Certificates.Service
 
             return retVal;
         }
+
+        public async Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize)
+        {
+            return await _certificateRepository.GetAllCertificatesPaginated(page, pageSize);
+        }
     }
 }

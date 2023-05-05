@@ -93,9 +93,11 @@ namespace IB_projekat.Users.Controller
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public IActionResult GetAuthorizedData()
         {
-               // Only users with the Authorized or Admin role can access this action
-            return Ok("Authorized data");
+            // Only users with the Authorized or Admin role can access this action
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            return Ok(role);
         }
+
 
         [HttpPut("activate/{id}/{token}")]
         public async Task<IActionResult> ActivateUserAsync(int id, string token)
