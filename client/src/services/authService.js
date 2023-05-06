@@ -20,13 +20,15 @@ async function checkCookieValidity() {
   return response.data;
 }
 
-async function Register(email, name, surname, password, phoneNumber) {
+async function Register(email, name, surname, password, phoneNumber,verificationMethod) {
+  console.log(verificationMethod);
   const response = await axios.post(`${API_BASE_URL}/register`, {
     email,
     name,
     surname,
     password,
-    phoneNumber
+    phoneNumber,
+    verificationMethod
   }, {
     withCredentials: true
   });
@@ -48,4 +50,28 @@ async function logOut()
     return response.data
 }
 
-export { SignIn, checkCookieValidity, Register, activateAccount,logOut };
+
+async function activateSms(code)
+  {
+    const response = await axios.post('http://localhost:8000/api/user/activateSms/'+code)
+    return response.data
+}
+
+async function SendResetMail(email)
+  {
+    const response = await axios.post('http://localhost:8000/api/user/forgotpassword',{email:email})
+    return response.data
+}
+
+async function resetPassword(id, token, newPassword)
+ {
+  const response = await axios.post(`http://localhost:8000/api/user/reset-password`, { Id:id,Token:token,NewPassword:newPassword });
+  return response.data;
+}
+
+async function checkResetPasswordToken(token)
+ {
+  const response = await axios.post(`http://localhost:8000/api/user/verify-password-reset-token/${token}`);
+  return response.data;
+}
+export { SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken};

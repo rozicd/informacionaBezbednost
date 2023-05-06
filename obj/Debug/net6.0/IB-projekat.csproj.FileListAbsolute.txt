@@ -290,3 +290,9 @@ C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\package.jso
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\public\manifest.json
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\SendGrid.dll
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\StarkbankEcdsa.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\Twilio.dll

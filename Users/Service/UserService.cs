@@ -1,9 +1,16 @@
 ﻿using IB_projekat.ActivationTokens.Model;
 using IB_projekat.ActivationTokens.Service;
+using IB_projekat.PasswordResetTokens.Model;
+using IB_projekat.SmsVerification.Model;
+using IB_projekat.SmsVerification.Service;
 using IB_projekat.Users.Model;
 using IB_projekat.Users.Repository;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Security.Cryptography;
+using System.Text;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
 
 namespace IB_projekat.Users.Service
 {
@@ -12,11 +19,13 @@ namespace IB_projekat.Users.Service
 
         private readonly IUserRepository<User> _userRepository;
         private readonly IActivationTokenService _activationTokenService;
+        private readonly ISmsVerificationService _smsVerificationService;
 
-        public UserService(IUserRepository<User> userRepository, IActivationTokenService activationTokenService)
+        public UserService(IUserRepository<User> userRepository, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService)
         {
             _userRepository = userRepository;
             _activationTokenService = activationTokenService;
+            _smsVerificationService = smsVerificationService;
         }
 
         public async Task AddUser(DTOS.CreateUserDTO userDTO)
@@ -27,21 +36,53 @@ namespace IB_projekat.Users.Service
             user.PhoneNumber = userDTO.PhoneNumber;
             user.Email = userDTO.Email;
             user.Role = UserType.Unauthorized;
-            user.Password = userDTO.Password;
+
+            // Hash the password using SHA-256 algorithm
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedPassword = sha256.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
+                user.Password = Convert.ToBase64String(hashedPassword);
+            }
+
             await _userRepository.Add(user);
-            ActivationToken token = await CreateActivationToken(user.Id);
-            await SendActivationEmail(user, token);
-            
+
+            if (userDTO.VerificationMethod == DTOS.VerificationMethodType.Email)
+            {
+                ActivationToken token = await CreateActivationToken(user.Id);
+                await SendActivationEmail(user, token);
+            }
+            else
+            {
+                SmsVerificationCode code = await _smsVerificationService.GenerateCode(user.Id);
+                await SendActivationSMS(user, code);
+            }
 
 
 
         }
 
 
-        public async Task<User> Authenticate(string username, string password)
+        public async Task<User> Authenticate(string email, string password)
         {
-           return await _userRepository.GetByEmailAndPassword(username, password);
-            
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedPassword = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                string hashedPasswordString = Convert.ToBase64String(hashedPassword);
+
+                User user = await _userRepository.GetByEmail(email);
+
+                if (user == null)
+                {
+                    return null;
+                }
+
+                if (user.Password == hashedPasswordString)
+                {
+                    return user;
+                }
+
+                return null;
+            }
         }
 
         private async Task<ActivationToken> CreateActivationToken(int userId)
@@ -49,6 +90,22 @@ namespace IB_projekat.Users.Service
             return await _activationTokenService.GenerateToken(userId);
         }
 
+        static async Task SendActivationSMS(User user,SmsVerificationCode code)
+        {
+            string accountSid = Environment.GetEnvironmentVariable("TWILLIO_SMS_ACCOUNT_ID"); "AC327779d7acfede1d207dbfe567cf6303"
+            string authToken = "1311e30945fd136f9732762d2d2e2cef";
+
+            TwilioClient.Init(accountSid, authToken);
+
+            var message = MessageResource.Create(
+                body: "This is your certificate app verification code:\n\n"+code.Code+"\n\nTeam 23 IB",
+                from: new Twilio.Types.PhoneNumber("+13203616935"),
+                statusCallback: new Uri("http://postb.in/1234abcd"),
+                to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
+            );
+
+            Console.WriteLine(message.Sid);
+        }
         static async Task SendActivationEmail(User user, ActivationToken token)
         {
 
@@ -60,6 +117,22 @@ namespace IB_projekat.Users.Service
             var plainTextContent = "test";
             var htmlContent = File.ReadAllText("Resources/accountActivation.html");
             var newHtmlContent = htmlContent.Replace("{{action_url}}", "http://localhost:3000/activate?id="+user.Id+"&token="+token.value);
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, newHtmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
+
+        public async Task SendPasswordResetEmail(User user, PasswordResetToken token)
+        {
+
+            var apiKey = Environment.GetEnvironmentVariable("SEND_GRID_API_KEY");
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("ibprojekat@gmail.com", "IB support");
+            var subject = "Test";
+            var to = new EmailAddress(user.Email, "Example User");
+            var plainTextContent = "test";
+            var htmlContent = File.ReadAllText("Resources/forgotPassword.html");
+            var newHtmlContent = htmlContent.Replace("{{action_url}}", "http://localhost:3000/reset-password?id=" + user.Id + "&token=" + token.Token);
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, newHtmlContent);
             var response = await client.SendEmailAsync(msg);
@@ -82,6 +155,14 @@ namespace IB_projekat.Users.Service
             return existingUser;
         }
 
+        public async Task DeleteUser(int id)
+        {
+            var user = await _userRepository.GetById(id);
+            if (user != null)
+            {
+                await _userRepository.Delete(user);
+            }
+        }
 
         public async Task<bool> UserExists(string email)
         {
@@ -99,6 +180,24 @@ namespace IB_projekat.Users.Service
         public async Task<User> GetById(int id)
         {
             return await _userRepository.GetById(id);
+        }
+        
+         public async Task<User> GetByEmail(string email)
+        {
+            return await _userRepository.GetByEmail(email);
+        }
+
+        public async Task ResetUserPassword(int id, User user, string newPassword)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashedPassword = sha256.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
+                string hashedPasswordString = Convert.ToBase64String(hashedPassword);
+
+                user.Password = hashedPasswordString;
+                await UpdateUser(id, user);
+
+            }
         }
     }
 }

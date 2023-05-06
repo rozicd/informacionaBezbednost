@@ -20,5 +20,16 @@ namespace IB_projekat.Users.DTOS
 
         [Required]
         public string PhoneNumber { get; set; }
+
+        [Required]
+        public VerificationMethodType VerificationMethod { get; set; }
+
+    }
+
+
+    public enum VerificationMethodType
+    {
+        Email,
+        PhoneNumber
     }
 }
