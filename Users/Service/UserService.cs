@@ -92,8 +92,8 @@ namespace IB_projekat.Users.Service
 
         static async Task SendActivationSMS(User user,SmsVerificationCode code)
         {
-            string accountSid = Environment.GetEnvironmentVariable("TWILLIO_SMS_ACCOUNT_ID"); "AC327779d7acfede1d207dbfe567cf6303"
-            string authToken = "1311e30945fd136f9732762d2d2e2cef";
+            string accountSid = Environment.GetEnvironmentVariable("TWILLIO_SMS_ACCOUNT_ID");
+            string authToken = Environment.GetEnvironmentVariable("TWILLIO_SMS_AUTH_TOKEN");
 
             TwilioClient.Init(accountSid, authToken);
 
