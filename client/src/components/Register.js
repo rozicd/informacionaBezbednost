@@ -60,8 +60,10 @@ export default function RegisterPage() {
   return (
     <div className={'container'}>
 
-      <main className='main'>
-        <h1 className='title'>Register</h1>
+      <main className='card'>
+        <h1 className='card-header'>Register</h1>
+        <div className="padding-20">
+
         <form onSubmit={handleSubmit} className='form'>
           <div className='fieldset'>
             <label htmlFor="email" className='label'>
@@ -96,25 +98,26 @@ export default function RegisterPage() {
           <label htmlFor="verification-method" className='verification-label'>
               Verification method:
             </label>
-          <div class="verification-method">
+          <div className="verification-method">
           <input type="radio" className='radio-button' name="verificationMethod" value="0" checked={verificationMethod === 0} onChange={() => setVerificationMethod(0)} />
-            <label for="email" className='radio-label'>Email</label>
+            <label htmlFor="email" className='radio-label'>Email</label>
 
             <input type="radio" className='radio-button' name="verificationMethod" value="1" checked={verificationMethod === 1} onChange={() => setVerificationMethod(1)} />
-            <label for="sms" className='radio-label'>SMS</label>
+            <label htmlFor="sms" className='radio-label'>SMS</label>
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='register-page-center-button'>
-              <button type="submit" className='register-page-button'>
+              <button type="submit" className='btn'>
               Register
               </button>
               <Link to='/login'>
-                <button type='button' className='register-page-back-button'>
+                <button type='button' className='btn'>
                     Back
                 </button>
               </Link>
             </div>
             </form>
+        </div>
             </main>
         </div>)
         }

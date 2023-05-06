@@ -62,5 +62,13 @@ namespace IB_projekat.Certificates.Repository
         {
             return await _context.Certificates.Include(c => c.User).FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
         }
+        public async Task<IEnumerable<Certificate>> GetAllIssued(string serialNumber)
+        {
+            var certificates = await _context.Certificates
+                .Where(c => c.Issuer == serialNumber)
+                .ToListAsync();
+
+            return certificates;
+        }
     }
 }

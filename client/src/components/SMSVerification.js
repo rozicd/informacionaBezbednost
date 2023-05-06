@@ -53,9 +53,11 @@ export default function SMSVerificationPage() {
 
   return (
     <div className='container'>
-      <main className='main'>
-        <h1 className='title'>SMS Verification</h1>
-        <form onSubmit={handleSubmit} className='form'>
+      <main className='card'>
+        <h1 className='card-header'>SMS Verification</h1>
+          <div className="padding-20">
+
+          <form onSubmit={handleSubmit} className='form'>
           <div className='fieldset'>
             <label htmlFor="code" className='label'>
               SMS code:
@@ -64,14 +66,15 @@ export default function SMSVerificationPage() {
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='buttons'>
-            <button type='submit' className='button'>
+            <button type='submit' className='btn'>
               Submit
             </button>
-            <button type='button' className='button' onClick={handleBackClick}>
+            <button type='button' className='btn' onClick={handleBackClick}>
               Back
             </button>
           </div>
         </form>
+          </div>
       </main>
     </div>
   );

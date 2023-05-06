@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { useState } from 'react';
 import {SignIn} from '../services/authService'
-
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +12,7 @@ export default function LoginPage() {
     try {
         const data = await SignIn(username, password);
         console.log(data);
-        window.location.reload()      
+        window.location.reload()
       } catch (error) {
         if(error.response.status == 401){
           setErrorMessage('Username or password is not correct!');
@@ -39,9 +38,11 @@ export default function LoginPage() {
   return (
     <div className='container'>
 
-      <main className='main'>
-        <h1 className='title'>Login</h1>
+      <main className='card'>
+        <h1 className='card-header'>Login</h1>
+        <div className="padding-20">
         <form onSubmit={handleSubmit} className='form'>
+
           <div className='fieldset'>
             <label htmlFor="username" className='label'>
               Username:
@@ -60,15 +61,16 @@ export default function LoginPage() {
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='center'>
-            <button type="submit" className='button'>Login</button>
+            <button type="submit" className='btn'>Login</button>
             <Link to="/register">
-                <button type="button" className='register-button'>
+                <button type="button" className='btn'>
                 Register
                 </button>
             </Link>
           </div>
 
         </form>
+        </div>
       </main>
     </div>
   );

@@ -68,6 +68,8 @@ const ResetPassword = React.memo(({ id, token }) => {
     <div className="reset-password-container">
         <div className="reset-password-main">
             <h2 className="reset-password-title">Reset Password</h2>
+            <div className="padding-20">
+
             <form className="reset-password-form" onSubmit={handleSubmit}>
                 <div className="reset-password-fieldset">
                 <label className="reset-password-label" htmlFor="new-password">New Password:</label>
@@ -95,6 +97,7 @@ const ResetPassword = React.memo(({ id, token }) => {
                 <button className="reset-password-cancel-button" onClick={() => navigate('/login')}>Cancel</button>
                 </div>
             </form>
+            </div>
       </div>
     </div>
   );

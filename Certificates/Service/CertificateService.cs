@@ -170,5 +170,116 @@ namespace IB_projekat.Certificates.Service
 
             return retVal;
         }
+
+        
+        public async Task<bool> ValidateCert(string serialNumber)
+        {
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            X509Certificate2 cert;
+            using (RSA rsa = RSA.Create())
+            {
+                try
+                {
+                    cert = new X509Certificate2($"{certDir}/{serialNumber}.crt");
+                    rsa.ImportRSAPrivateKey(File.ReadAllBytes($"{keyDir}/{serialNumber}.key"), out _);
+                    RSA publicKey = cert.GetRSAPublicKey();
+                    cert = cert.CopyWithPrivateKey(rsa);
+                }
+                catch (Exception ex)
+
+                {
+                    return false;
+                }
+            }
+
+            if (!certDB.CertificateType.Equals(CertificateType.Root))
+            {
+                if (ValidateCert(certDB.Issuer).Result == false) return false; ;
+            }
+
+            if (!(cert.NotAfter > DateTime.Now))
+            {
+                return false;
+            }
+            if (!(cert.NotBefore < DateTime.Now))
+            {
+                return false;
+            }
+
+
+            return true;
+        }
+
+        public async Task<bool> ValidateCertFile(X509Certificate2 cert)
+        {
+            Console.WriteLine(cert.SerialNumber);
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(cert.SerialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            using (RSA rsa = RSA.Create())
+            {
+                try
+                {
+                    rsa.ImportRSAPrivateKey(File.ReadAllBytes($"{keyDir}/{cert.SerialNumber}.key"), out _);
+                    RSA publicKey = cert.GetRSAPublicKey();
+                    cert = cert.CopyWithPrivateKey(rsa);
+                }
+                catch (Exception ex)
+
+                {
+                    return false;
+                }
+            }
+
+            if (!certDB.CertificateType.Equals(CertificateType.Root))
+            {
+                if (ValidateCert(certDB.Issuer).Result == false) return false; ;
+            }
+
+            if (!(cert.NotAfter > DateTime.Now))
+            {
+                return false;
+            }
+            if (!(cert.NotBefore < DateTime.Now))
+            {
+                return false;
+            }
+
+
+            return true;
+        }
+
+        public async Task<bool> RevokeCert(string serialNumber)
+        {
+            Console.WriteLine(serialNumber);
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            List<Certificate> issuedCertificates = new List<Certificate>();
+            try
+            {
+                issuedCertificates = (List<Certificate>)await _certificateRepository.GetAllIssued(serialNumber);
+            }
+            catch
+            {
+                Console.WriteLine("no More");
+            }
+            foreach (Certificate cert in issuedCertificates)
+            {
+                await RevokeCert(cert.SerialNumber);
+            }
+            certDB.Status = CertificateStatus.Revoked;
+            await _certificateRepository.Update(certDB);
+            return true;
+
+        }
     }
 }

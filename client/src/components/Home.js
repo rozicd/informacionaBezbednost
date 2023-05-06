@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import { logOut } from '../services/authService';
 import './Home.css';
 
@@ -10,27 +10,26 @@ function Home() {
     try {
       const data = await logOut();
       console.log(data);
-      window.location.reload()      
+      window.location.reload()
     } catch (error) {
       console.error(error);
     }
   }
 
   return (
-    <div>
-      <nav>
-        <div className="home-navbar">
-          <h1>My App</h1>
-          <button onClick={handleSignOut}>Sign Out</button>
-        </div>
-      </nav>
-      <div className="home-container">
-        <div className="home-main">
-          <h1 className="home-title">Welcome to My App!</h1>
-          <div className="home-center"></div>
-        </div>
+      <div className='container'>
+
+        <main className='card size80'>
+          <h1 className='card-header'>Home</h1>
+          <div className="home-div">
+
+            <button onClick={handleSignOut} className="btn logout-btn">Sign Out</button>
+
+          </div>
+
+        </main>
       </div>
-    </div>
+
   );
 }
 
