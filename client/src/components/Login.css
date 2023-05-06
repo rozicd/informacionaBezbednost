@@ -12,7 +12,6 @@
   .main {
     background-color: #c0c0c0;
     border: 5px solid #008080;
-    border-radius: 10px;
     box-shadow: 5px 5px 0 #a0a0a0;
     padding: 50px;
     padding-left:100px;
@@ -57,7 +56,6 @@
   .input {
     background-color: #fff;
     border: 1px solid #000;
-    border-radius: 3px;
     color: #000;
     font-size: 17px;
     padding: 3px;
@@ -67,7 +65,6 @@
   .button {
     background-color: #008080;
     border: 1px solid #000;
-    border-radius: 3px;
     color: #fff;
     cursor: pointer;
     font-size: 14px;
@@ -80,7 +77,6 @@
   .register-button {
     background-color: #008080;
     border: 1px solid #000;
-    border-radius: 3px;
     color: #fff;
     cursor: pointer;
     font-size: 14px;

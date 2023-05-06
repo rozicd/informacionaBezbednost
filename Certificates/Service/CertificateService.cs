@@ -179,6 +179,10 @@ namespace IB_projekat.Certificates.Service
             {
                 return false;
             }
+            if (certDB.Status != CertificateStatus.Valid)
+            {
+                return false;
+            }
             X509Certificate2 cert;
             using (RSA rsa = RSA.Create())
             {
@@ -222,6 +226,10 @@ namespace IB_projekat.Certificates.Service
             {
                 return false;
             }
+            if (certDB.Status != CertificateStatus.Valid)
+            {
+                return false;
+            }
             using (RSA rsa = RSA.Create())
             {
                 try
@@ -253,6 +261,33 @@ namespace IB_projekat.Certificates.Service
 
 
             return true;
+        }
+
+        public async Task<bool> RevokeCert(string serialNumber)
+        {
+            Console.WriteLine(serialNumber);
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            List<Certificate> issuedCertificates = new List<Certificate>();
+            try
+            {
+                issuedCertificates = (List<Certificate>)await _certificateRepository.GetAllIssued(serialNumber);
+            }
+            catch
+            {
+                Console.WriteLine("no More");
+            }
+            foreach (Certificate cert in issuedCertificates)
+            {
+                await RevokeCert(cert.SerialNumber);
+            }
+            certDB.Status = CertificateStatus.Revoked;
+            await _certificateRepository.Update(certDB);
+            return true;
+           
         }
     }
 }

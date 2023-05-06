@@ -55,8 +55,8 @@ export default function RegisterPage() {
   return (
     <div className={'container'}>
 
-      <main className='main'>
-        <h1 className='title'>Register</h1>
+      <main className='card'>
+        <h1 className='card-header'>Register</h1>
         <form onSubmit={handleSubmit} className='form'>
           <div className='fieldset'>
             <label htmlFor="email" className='label'>
@@ -90,11 +90,11 @@ export default function RegisterPage() {
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='register-page-center-button'>
-              <button type="submit" className='register-page-button'>
+              <button type="submit" className='btn'>
               Register
               </button>
               <Link to='/login'>
-                <button type='button' className='register-page-back-button'>
+                <button type='button' className='btn'>
                     Back
                 </button>
               </Link>
