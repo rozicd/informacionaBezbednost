@@ -290,3 +290,8 @@ C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\package.jso
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\client\public\manifest.json
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\SendGrid.dll
 C:\Users\erdel\OneDrive\Desktop\najnoviji_ib\bin\Debug\net6.0\StarkbankEcdsa.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\client\package-lock.json
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\client\package.json
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\client\public\manifest.json
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\SendGrid.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\StarkbankEcdsa.dll

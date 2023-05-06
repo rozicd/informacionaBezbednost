@@ -14,12 +14,13 @@ using IB_projekat.Requests.Model.Repository;
 using IB_projekat.Requests.Repository;
 using IB_projekat.ActivationTokens.Repository;
 using IB_projekat.ActivationTokens.Service;
+using IB_projekat.tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"), ServiceLifetime.Transient);
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;"), ServiceLifetime.Transient);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
@@ -80,6 +81,12 @@ var configuration = builder.Configuration;
 builder.Services.AddSingleton<IConfiguration>(configuration);
 
 builder.Services.AddControllers();
+
+builder.Services.AddControllers(options =>
+{
+    options.InputFormatters.Insert(0, new CustomMediaTypeInputFormatter("application/x-x509-ca-cert"));
+    options.OutputFormatters.Insert(0, new CustomMediaTypeOutputFormatter("application/x-x509-ca-cert"));
+});
 
 var app = builder.Build();
 
