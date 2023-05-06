@@ -35,6 +35,13 @@ namespace IB_projekat.Certificates.Controller
             return await _certificateService.ValidateCertFile(certificate);
         }
 
+        [HttpDelete("revoke/{serialNumber}")]
+        public async Task<bool> RevokeCertFile(string serialNumber)
+        {
+
+            return await _certificateService.RevokeCert(serialNumber);
+        }
+
 
 
     }
