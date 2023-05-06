@@ -9,6 +9,7 @@ import ForgotPassword from './components/ForgotPassword';
 import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
 import ResetPassword from './components/ResetPassword';
+import VerifyCert from "./components/VerifyCert";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,7 +59,10 @@ function App() {
                 element={
                     isAuthenticated ? <Home /> : <Navigate to="/login" />
                 }
-            />
+            >
+                <Route path="verify" element={<VerifyCert/>}/>
+
+            </Route>
             <Route
                 path="/verify-sms"
                 element={
