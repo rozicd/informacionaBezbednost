@@ -54,6 +54,10 @@ export default function LoginPage() {
             </label>
             <input type="password" id="password" name="password" className='input' value={password} onChange={handlePasswordChange} />
           </div>
+          <div className="links">
+            <Link to="/forgot-password" className="forgot-password-link">Forgot password?</Link>
+            <Link to="/verify-sms" className="verify-sms-link">Verify with SMS</Link>
+          </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='center'>
             <button type="submit" className='button'>Login</button>

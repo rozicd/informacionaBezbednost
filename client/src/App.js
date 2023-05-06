@@ -2,9 +2,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
-import Activate from './components/Activate'
+import Activate from './components/Activate';
+import SMSVerification from './components/SMSVerification';
+import ForgotPassword from './components/ForgotPassword';
+
 import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
+import ResetPassword from './components/ResetPassword';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,6 +29,12 @@ function App() {
 
     return (
         <Routes>
+          <Route
+                path="/"
+                element={
+                    isAuthenticated ? <Navigate to="/home" /> : <Navigate to="/login" />
+                }
+            />
             <Route
                 path="/login"
                 element={
@@ -47,6 +57,24 @@ function App() {
                 path="/home"
                 element={
                     isAuthenticated ? <Home /> : <Navigate to="/login" />
+                }
+            />
+            <Route
+                path="/verify-sms"
+                element={
+                    <SMSVerification/>
+                }
+            />
+            <Route
+                path="/forgot-password"
+                element={
+                    <ForgotPassword/>
+                }
+            />
+            <Route
+                path="/reset-password"
+                element={
+                    <ResetPassword/>
                 }
             />
         </Routes>

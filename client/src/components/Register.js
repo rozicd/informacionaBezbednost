@@ -9,12 +9,13 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [verificationMethod, setVerificationMethod] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await Register(email, name, surname, password, phoneNumber);
+      const response = await Register(email, name, surname, password, phoneNumber,verificationMethod);
       window.alert("SUCCESSFULY REGISTERED")
         navigate('/login')
         setErrorMessage('');
@@ -52,6 +53,10 @@ export default function RegisterPage() {
     setPhoneNumber(event.target.value);
   };
 
+  const handleVerificationMethodChange = (event) => {
+    setVerificationMethod(Number(event.target.value));
+  };
+
   return (
     <div className={'container'}>
 
@@ -87,6 +92,16 @@ export default function RegisterPage() {
               Password:
             </label>
             <input type="password" id="password" name="password" className='input' value={password} onChange={handlePasswordChange} />
+          </div>
+          <label htmlFor="verification-method" className='verification-label'>
+              Verification method:
+            </label>
+          <div class="verification-method">
+          <input type="radio" className='radio-button' name="verificationMethod" value="0" checked={verificationMethod === 0} onChange={() => setVerificationMethod(0)} />
+            <label for="email" className='radio-label'>Email</label>
+
+            <input type="radio" className='radio-button' name="verificationMethod" value="1" checked={verificationMethod === 1} onChange={() => setVerificationMethod(1)} />
+            <label for="sms" className='radio-label'>SMS</label>
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='register-page-center-button'>

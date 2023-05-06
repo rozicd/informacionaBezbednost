@@ -14,6 +14,10 @@ using IB_projekat.Requests.Model.Repository;
 using IB_projekat.Requests.Repository;
 using IB_projekat.ActivationTokens.Repository;
 using IB_projekat.ActivationTokens.Service;
+using IB_projekat.SmsVerification.Repository;
+using IB_projekat.SmsVerification.Service;
+using IB_projekat.PasswordResetTokens.Repository;
+using IB_projekat.PasswordResetTokens.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +34,11 @@ builder.Services.AddScoped<IRequestService, RequestService>();
 builder.Services.AddScoped<IRequestRepository, RequestRepository>();
 builder.Services.AddScoped<IActivationTokenRepository, ActivationTokenRepository>();
 builder.Services.AddScoped<IActivationTokenService, ActivationTokenService>();
+builder.Services.AddScoped<ISmsVerificationRepository, SmsVerificationRepository>();
+builder.Services.AddScoped<ISmsVerificationService, SmsVerificationService>();
+builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
+builder.Services.AddScoped<IPasswordResetTokenService, PasswordResetTokenService>();
+
 
 builder.Services.AddCors(options =>
 {

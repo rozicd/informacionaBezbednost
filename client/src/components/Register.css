@@ -95,6 +95,29 @@
     justify-content: space-evenly;
   }
   
+  .verification-method{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+
+  }
+  .verification-label{
+    margin-top:20px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #000;
+  }
+  .radio-label{
+    color: #000;
+    font-size: 14px;
+    margin-right: 10px;
+    text-align: left;
+    width: 60%;
+    font-weight: bold;
+  }
+  .radio-button{
+    width: 60%;
+  }
   .error {
     color: red;
     font-size: 14px;

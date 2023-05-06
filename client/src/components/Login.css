@@ -20,6 +20,17 @@
     text-align: center;
   }
 
+  .forgot-password-link{
+    font-size:small;
+  }
+  .links{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .verify-sms-link{
+    font-size:small;
+  }
   .center{
     display:flex;
     flex-direction: row;

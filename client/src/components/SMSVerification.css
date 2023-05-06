@@ -1,0 +1,121 @@
+.container {
+    background-color: #008080;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .title{
+    margin-bottom:30px;
+  }
+  .main {
+    background-color: #c0c0c0;
+    border: 5px solid #008080;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #a0a0a0;
+    padding: 50px;
+    padding-left:100px;
+    padding-right:100px;
+    text-align: center;
+  }
+
+  .forgot-password-link{
+    font-size:small;
+  }
+  .links{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .verify-sms-link{
+    font-size:small;
+  }
+  .center{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top:20px;
+  }
+  
+  .logo {
+    margin-bottom: 20px;
+    width: 200px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .fieldset {
+    display:flex;
+    margin-top:10px;
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .label {
+    color: #000;
+    font-size: 17px;
+    margin-right: 10px;
+    text-align: left;
+  }
+  
+  .input {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #000;
+    font-size: 17px;
+    padding: 3px;
+    width: 200px;
+  }
+  
+  .button {
+    background-color: #008080;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 3px 5px;
+    height:35px;
+    transition: background-color 0.2s ease-in-out;
+    width: 70px;
+  }
+
+  .register-button {
+    background-color: #008080;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    height:35px;
+    padding: 5px;
+    width: 70px;
+    font-family: Arial, sans-serif;
+  }
+  .error{
+    margin:0;
+    padding:0;
+  }
+  .button:hover {
+    background-color: #006060;
+  }
+
+  .register-button:hover {
+    background-color: #006060;
+  }
+
+
+.buttons{
+    margin-top:20px;
+    width: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
