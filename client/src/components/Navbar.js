@@ -21,9 +21,8 @@ function Navbar({ role }) {
   return (
     <nav>
       <div className="home-navbar">
-        <h1>My App</h1>
         {role === 2 && <AdminMenu />}
-        <button onClick={handleSignOut}>Sign Out</button>        
+        <button className='btn' onClick={handleSignOut}>Sign Out</button>        
       </div>
     </nav>
   );

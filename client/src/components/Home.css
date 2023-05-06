@@ -25,13 +25,11 @@
   }
 
   .home-navbar {
-    background-color: #008080;
     color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 65px;
-    position: fixed;
     top: 0;
     width: 100%;
     z-index: 1;
@@ -42,14 +40,14 @@
   }
 
   .home-navbar button {
-    background-color: #008080;
-    border: 5px solid #008080;
-    color: #fff;
-    cursor: pointer;
-    font-size: 16px;
-    width: auto;
-    height: inherit;
-    margin-left: auto;
+    height: 100%;
+  }
+
+  .home-navbar .menu {
+    height: 100%;
+  }
+  .home-navbar .menu button{
+    height: 100%;
   }
 
   .home-navbar button:hover {

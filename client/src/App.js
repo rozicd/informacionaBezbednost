@@ -11,6 +11,7 @@ import Requests from './components/RequestList';
 import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
 import ResetPassword from './components/ResetPassword';
+import VerifyCert from "./components/VerifyCert";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -65,6 +66,9 @@ function App() {
             >
               <Route path="certificates" element={<Certificates/>}/>
               <Route path="requests" element = {<Requests/>} />            
+            
+            <Route path="verify" element={<VerifyCert/>}/>
+
             </Route>
             <Route
                 path="/verify-sms"

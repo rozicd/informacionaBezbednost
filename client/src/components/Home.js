@@ -2,12 +2,13 @@ import React from 'react';
 import {Outlet, Link, useNavigate} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { logOut } from '../services/authService';
+import Verify from './VerifyCert';
 import './Home.css';
 import Navbar from './Navbar';
 import { checkCookieValidity, GetUserByEmail } from '../services/authService';
 
 function Home() {
-  const navigate = useNavigate();
+  
   const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
 
@@ -35,7 +36,7 @@ function Home() {
       
       console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     checkAuthentication()
@@ -44,18 +45,21 @@ function Home() {
   }, [email]);
 
   return (
-      <div className='container'>
 
-        <main className='card size80'>
-          <h1 className='card-header'>Home</h1>
+      <div className="container">
+        <main className="card size80">
+          <h1 className="card-header">Home</h1>
           <div className="home-div">
             <Navbar role = {user.role}/>
-            <Outlet/>
+            
+            <div>
+              <Outlet />
+            </div>
           </div>
           
         </main>
-      </div>
 
+      </div>
   );
 }
 
