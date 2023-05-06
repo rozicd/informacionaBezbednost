@@ -13,5 +13,7 @@ namespace IB_projekat.Certificates.Repository
         Task Add(Certificate certificate);
         Task Update(Certificate certificate);
         Task Delete(Certificate certificate);
+
+        Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize);
     }
 }

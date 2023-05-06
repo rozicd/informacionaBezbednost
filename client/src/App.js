@@ -5,6 +5,8 @@ import Home from './components/Home';
 import Activate from './components/Activate';
 import SMSVerification from './components/SMSVerification';
 import ForgotPassword from './components/ForgotPassword';
+import Certificates from './components/CertificatesList';
+import Requests from './components/RequestList';
 
 import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
@@ -12,17 +14,18 @@ import ResetPassword from './components/ResetPassword';
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [data, setData] = useState('')
     async function checkAuthentication() {
       try {
         const data = await checkCookieValidity();
+        setData(data)
         setIsAuthenticated(true)
       } catch (error) {
         console.error(error);
         setIsAuthenticated(false);
       }
     }
-    useEffect(() => {
-      
+    useEffect(() => {   
 
       checkAuthentication();
   }, []);
@@ -56,9 +59,13 @@ function App() {
             <Route
                 path="/home"
                 element={
-                    isAuthenticated ? <Home /> : <Navigate to="/login" />
+                    isAuthenticated ? <Home data = {data}/> : <Navigate to="/login" />
                 }
-            />
+                
+            >
+              <Route path="certificates" element={<Certificates/>}/>
+              <Route path="requests" element = {<Requests/>} />            
+            </Route>
             <Route
                 path="/verify-sms"
                 element={
