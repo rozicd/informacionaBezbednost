@@ -28,11 +28,11 @@ namespace IB_projekat.Certificates.Controller
         }
 
         [HttpPost("validate")]
-        public async Task<bool> ValidateCertFile([FromBody] byte[] certificateBytes)
+        public async Task<IActionResult> ValidateCertFile([FromBody] byte[] certificateBytes)
         {
             X509Certificate2 certificate = new X509Certificate2(certificateBytes);
 
-            return await _certificateService.ValidateCertFile(certificate);
+             return Ok(await _certificateService.ValidateCertFile(certificate));
         }
 
         [HttpDelete("revoke/{serialNumber}")]
