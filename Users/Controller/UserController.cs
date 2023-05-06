@@ -79,7 +79,7 @@ namespace IB_projekat.Users.Controller
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Name, user.Email.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
 
@@ -102,9 +102,11 @@ namespace IB_projekat.Users.Controller
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public IActionResult GetAuthorizedData()
         {
-               // Only users with the Authorized or Admin role can access this action
-            return Ok("Authorized data");
+            // Only users with the Authorized or Admin role can access this action
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            return Ok(userEmail);
         }
+
 
         [HttpPut("activate/{id}/{token}")]
         public async Task<IActionResult> ActivateUserAsync(int id, string token)
@@ -251,6 +253,13 @@ namespace IB_projekat.Users.Controller
             }
 
             return Ok("The password reset token is valid.");
+        }
+
+        [HttpPost("email")]
+        public async Task<User> GetByEmail([FromBody] UserEmailDTO userEmailDTO)
+        {
+            User user = await _userService.GetByEmail(userEmailDTO.email);
+            return user;
         }
 
 

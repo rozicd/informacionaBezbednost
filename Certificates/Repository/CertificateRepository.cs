@@ -70,5 +70,14 @@ namespace IB_projekat.Certificates.Repository
 
             return certificates;
         }
+
+        public async Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize)
+        {
+            return await _context.Certificates
+                .Include(c => c.User)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
     }
 }

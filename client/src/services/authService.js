@@ -13,6 +13,14 @@ async function SignIn(username, password) {
   return response.data;
 }
 
+async function GetUserByEmail(email) {
+  const response = await axios.post(`${API_BASE_URL}/email`, {
+    email 
+  });
+  return response.data;
+}
+
+
 async function checkCookieValidity() {
   const response = await axios.get(`${API_BASE_URL}/authorized`, {
     withCredentials: true
@@ -74,4 +82,4 @@ async function checkResetPasswordToken(token)
   const response = await axios.post(`http://localhost:8000/api/user/verify-password-reset-token/${token}`);
   return response.data;
 }
-export { SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken};
+export { SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken, GetUserByEmail};

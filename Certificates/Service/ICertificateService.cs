@@ -12,5 +12,7 @@ namespace IB_projekat.Certificates.Service
         Task<bool> ValidateCert(string serialNumber);
         Task<bool> ValidateCertFile(X509Certificate2 certificateBytes);
         Task<bool> RevokeCert(string serialNumber);
+
+        Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize);
     }
 }
