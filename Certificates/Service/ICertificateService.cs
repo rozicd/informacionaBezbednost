@@ -11,6 +11,5 @@ namespace IB_projekat.Certificates.Service
         Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo);
         Task<bool> ValidateCert(string serialNumber);
         Task<bool> ValidateCertFile(X509Certificate2 certificateBytes);
-        Task<bool> RevokeCert(string serialNumber);
     }
 }

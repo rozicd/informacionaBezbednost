@@ -295,3 +295,9 @@ D:\Fakultet\IB\Proj\bin\Debug\net6.0\client\package.json
 D:\Fakultet\IB\Proj\bin\Debug\net6.0\client\public\manifest.json
 D:\Fakultet\IB\Proj\bin\Debug\net6.0\SendGrid.dll
 D:\Fakultet\IB\Proj\bin\Debug\net6.0\StarkbankEcdsa.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Fakultet\IB\Proj\bin\Debug\net6.0\Twilio.dll

@@ -7,7 +7,6 @@ namespace IB_projekat.Certificates.Repository
         Certificate GetById(int id);
         Task<Certificate> GetBySerialNumber(string serialNumber);
         Task<IEnumerable<Certificate>> GetAll();
-        Task<IEnumerable<Certificate>> GetAllIssued(string serialNumber);
         Task<IEnumerable<Certificate>> GetAllEndCertificates();
         Task<IEnumerable<Certificate>> GetAllIntermediateCertificates();
         Task Add(Certificate certificate);

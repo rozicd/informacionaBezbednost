@@ -210,13 +210,17 @@ button:focus{
     color: grey;
     text-shadow: 1px 1px #fff;
 }
-
+.padding-20
+{
+    padding: 20px;
+}
 /*
 
 CARDS
 
 */
 .card{
+
     border: solid;
     border-width: 2px;
     border-bottom-color: #424242;
@@ -225,6 +229,7 @@ CARDS
     border-top-color: #fff;
     background: silver;
     color:#212529;
+
 }
 .card.square{
     border-radius: 0px;

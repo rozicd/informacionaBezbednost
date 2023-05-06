@@ -73,6 +73,10 @@
             "System.Security.Cryptography.X509Certificates": {
               "target": "Package",
               "version": "[4.3.2, )"
+            },
+            "Twilio": {
+              "target": "Package",
+              "version": "[6.6.0, )"
             }
           },
           "imports": [

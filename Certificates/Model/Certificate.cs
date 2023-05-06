@@ -18,8 +18,7 @@ namespace IB_projekat.Certificates.Model
     public enum CertificateStatus
     {
         Valid,
-        NotValid,
-        Revoked
+        NotValid
     }
 
     public enum CertificateType

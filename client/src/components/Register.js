@@ -9,12 +9,13 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [verificationMethod, setVerificationMethod] = useState(0);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await Register(email, name, surname, password, phoneNumber);
+      const response = await Register(email, name, surname, password, phoneNumber,verificationMethod);
       window.alert("SUCCESSFULY REGISTERED")
         navigate('/login')
         setErrorMessage('');
@@ -52,11 +53,17 @@ export default function RegisterPage() {
     setPhoneNumber(event.target.value);
   };
 
+  const handleVerificationMethodChange = (event) => {
+    setVerificationMethod(Number(event.target.value));
+  };
+
   return (
     <div className={'container'}>
 
       <main className='card'>
         <h1 className='card-header'>Register</h1>
+        <div className="padding-20">
+
         <form onSubmit={handleSubmit} className='form'>
           <div className='fieldset'>
             <label htmlFor="email" className='label'>
@@ -88,6 +95,16 @@ export default function RegisterPage() {
             </label>
             <input type="password" id="password" name="password" className='input' value={password} onChange={handlePasswordChange} />
           </div>
+          <label htmlFor="verification-method" className='verification-label'>
+              Verification method:
+            </label>
+          <div className="verification-method">
+          <input type="radio" className='radio-button' name="verificationMethod" value="0" checked={verificationMethod === 0} onChange={() => setVerificationMethod(0)} />
+            <label htmlFor="email" className='radio-label'>Email</label>
+
+            <input type="radio" className='radio-button' name="verificationMethod" value="1" checked={verificationMethod === 1} onChange={() => setVerificationMethod(1)} />
+            <label htmlFor="sms" className='radio-label'>SMS</label>
+          </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
           <div className='register-page-center-button'>
               <button type="submit" className='btn'>
@@ -100,6 +117,7 @@ export default function RegisterPage() {
               </Link>
             </div>
             </form>
+        </div>
             </main>
         </div>)
         }
