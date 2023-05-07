@@ -26,5 +26,24 @@ async function RevokeCert(serialNumber) {
     });
     return response.data
 }
+async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags){
+    console.log(certificateType)
+    console.log(signatureSerialNumber)
+    console.log(userId)
+    console.log(flags)
+    certificateType = Number(certificateType);
+    const response = await axios.post('http://localhost:8000/api/request', {
+        certificateType,
+        SignitureSerialNumber:signatureSerialNumber,
+        userId,
+        flags
+    }, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.data
+}
 
-export  {VerifyCert,VerifyCertString,RevokeCert};
+export  {VerifyCert,VerifyCertString,RevokeCert,AddCertRequest};
+

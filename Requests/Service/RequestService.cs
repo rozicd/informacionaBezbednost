@@ -34,13 +34,17 @@ namespace IB_projekat.Requests.Service
             Request request = await _requestRepository.GetById(certId);
             request.Status = Status.Accepted;
             await _requestRepository.Update(request);
-            await _certificateService.IssueCertificate(request.SignitureSerialNumber, request.User, request.Flags, DateTime.Now.AddHours(100000));
+            await _certificateService.IssueCertificate(request.SignitureSerialNumber, request.User, request.Flags, DateTime.Now.AddHours(100000),request.CertificateType);
         }
 
         
 
         public async Task Create(RequestDTO requestDTO)
         {
+            if(requestDTO.SignitureSerialNumber == null)
+            {
+                requestDTO.SignitureSerialNumber = " ";
+            }
             Request request = new Request();
             request.SignitureSerialNumber = requestDTO.SignitureSerialNumber;
             request.CertificateType = requestDTO.CertificateType;
@@ -48,21 +52,11 @@ namespace IB_projekat.Requests.Service
             request.Status = Status.Pending;
             request.Flags = requestDTO.Flags;
             await _requestRepository.Add(request);
-            if (string.IsNullOrEmpty(request.SignitureSerialNumber))
-            {
-                await Accept(request.Id);
-
-            }
-            else
-            {
-                await Accept(request.Id);
-            }
-            /*Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
+            Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
             if (request.User.Id == certificate.User.Id)
             {
                 await Accept(request.Id);
             }
-            }*/
         }
 
         public async Task Decline(int certId)
@@ -72,11 +66,19 @@ namespace IB_projekat.Requests.Service
             await _requestRepository.Update(request);
         }
 
-        public async Task<IEnumerable<Request>> GetByUserId(int id)
+        public async Task<List<Request>> GetByUserId(int id)
         {
             return await _requestRepository.GetByUsersId(id);
         }
 
-        
+        public async Task<List<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize)
+        {
+            return await _requestRepository.GetRequestsByCertificateSerialNumber(userId, page, pageSize);
+        }
+
+        public async Task<List<Request>> GetAll(int page, int pageSize)
+        {
+            return await _requestRepository.GetAll(page, pageSize);
+        }
     }
 }

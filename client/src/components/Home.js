@@ -26,7 +26,6 @@ function Home() {
 
   async function getUser() {
     try {
-      console.log("kurcina")
       console.log(email)
       const data = await GetUserByEmail(email);
       setUser(data);
@@ -51,11 +50,12 @@ function Home() {
           <h1 className="card-header">Home</h1>
           <div className="home-div">
             <Navbar role = {user.role}/>
-            
-            <div  className="outlet-div">
+
+                <div className='home-content'>
               <div className="card out-card-div">
               <Outlet />
               </div>
+
             </div>
           </div>
           

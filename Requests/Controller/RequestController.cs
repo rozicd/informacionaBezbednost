@@ -1,4 +1,5 @@
 ﻿using IB_projekat.Certificates.DTOS;
+using IB_projekat.PaginatedResponseModel;
 using IB_projekat.Requests.Model;
 using IB_projekat.Requests.Service;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,16 @@ namespace IB_projekat.Requests.Controller
         [HttpPost]
         public async Task<IActionResult> AddRequest(RequestDTO requestDTO)
         {
+            if(requestDTO.SignitureSerialNumber == null && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
+            {
+                return BadRequest("Certificate needs to be signed by a serial number!!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _requestService.Create(requestDTO);
             return Ok();
         }
@@ -37,9 +48,18 @@ namespace IB_projekat.Requests.Controller
             return Ok();
         }
         [HttpGet("{userId}")]
-        public async Task<IEnumerable<Request>> GetByUserId(int userId)
+        public async Task<ActionResult<PaginationResponse<Request>>> GetByUserId(int userId, [FromQuery] int page = 1, [FromQuery] int pageSzie = 10)
         {
-            return await _requestService.GetByUserId(userId);
+            var request = await _requestService.GetRequestsByCertificateSerialNumber(userId, page, pageSzie);
+            var total = request.Count();
+            return Ok(new PaginationResponse<Request>(request, page, pageSzie, total));
+        }
+        [HttpGet("all")]
+        public async Task<ActionResult<PaginationResponse<Request>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSzie = 10)
+        {
+            var request = await _requestService.GetAll(page, pageSzie);
+            var total = request.Count();
+            return Ok(new PaginationResponse<Request>(request, page, pageSzie, total));
         }
 
     }
