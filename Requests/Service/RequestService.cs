@@ -2,6 +2,7 @@
 using IB_projekat.Certificates.Model;
 using IB_projekat.Certificates.Repository;
 using IB_projekat.Certificates.Service;
+using IB_projekat.PaginatedResponseModel;
 using IB_projekat.Requests.Model;
 using IB_projekat.Requests.Model.Repository;
 using IB_projekat.Users.Model;
@@ -52,6 +53,11 @@ namespace IB_projekat.Requests.Service
             request.Status = Status.Pending;
             request.Flags = requestDTO.Flags;
             await _requestRepository.Add(request);
+            if(requestDTO.SignitureSerialNumber == "")
+            {
+                await Accept(request.Id);
+                return;
+            }
             Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
             if (request.User.Id == certificate.User.Id)
             {
@@ -71,14 +77,18 @@ namespace IB_projekat.Requests.Service
             return await _requestRepository.GetByUsersId(id);
         }
 
-        public async Task<List<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize)
+        public async Task<PaginationResponse<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize)
         {
-            return await _requestRepository.GetRequestsByCertificateSerialNumber(userId, page, pageSize);
+            List<Request> requests =  await _requestRepository.GetRequestsByCertificateSerialNumber(userId, page, pageSize);
+            int totalCount = await _requestRepository.GetTotalCountForUser(userId);
+                return new PaginationResponse<Request>(requests, page, pageSize, totalCount);
         }
 
-        public async Task<List<Request>> GetAll(int page, int pageSize)
+        public async Task<PaginationResponse<Request>> GetAll(int page, int pageSize)
         {
-            return await _requestRepository.GetAll(page, pageSize);
+            List<Request> requests = await _requestRepository.GetAll(page, pageSize);
+            int totalCount = await _requestRepository.GetRequestsCount();
+            return new PaginationResponse<Request>(requests, page, pageSize, totalCount);
         }
     }
 }

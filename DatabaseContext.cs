@@ -22,6 +22,7 @@ namespace IB_projekat
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
+
         }
 
         public DatabaseContext()
