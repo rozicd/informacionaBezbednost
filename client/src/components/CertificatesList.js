@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getCertificates from '../services/certificateService';
+import {RevokeCert} from "../services/certService";
 import axios from 'axios';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import './CertificatesList.css';
@@ -22,13 +23,12 @@ function Certificates() {
   useEffect(() => {
     setShowOutlet(false);
     const fetchCertificates = async () => {
-    try{
+      try {
         const response = await getCertificates(currentPage);
         setCertificates(response.items);
         setTotalItems(response.totalItems);
-    }
-      catch(error){
-
+      } catch (error) {
+        console.error(error);
       }
     };
     fetchCertificates();
@@ -40,6 +40,11 @@ function Certificates() {
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
+  const handleButtonClick = async (serialNumber) => {
+    // Do something with the serial number, like send it to a server
+    await RevokeCert(serialNumber);
+  };
+
   return (
     <div className='center-list'>
       {!showOutlet && (
@@ -50,6 +55,8 @@ function Certificates() {
               <th>Name</th>
               <th>Issuer</th>
               <th>Expiration Date</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -59,6 +66,12 @@ function Certificates() {
                 <td>{certificate.serialNumber}</td>
                 <td>{certificate.issuer}</td>
                 <td>{certificate.validTo}</td>
+                <td>{certificate.status}</td>
+                <td>
+                  {certificate.status !== 2 && (
+                      <button className="btn revoke-btn" onClick={() => handleButtonClick(certificate.serialNumber)}>Revoke</button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

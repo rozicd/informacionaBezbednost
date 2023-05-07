@@ -22,9 +22,10 @@ using IB_projekat.PasswordResetTokens.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
     options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"), ServiceLifetime.Transient);
+
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();

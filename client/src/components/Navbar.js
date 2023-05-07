@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logOut } from '../services/authService';
 import AdminMenu from './AdminMenu';
+
 import UserMenu from './UserMenu';
 
 function Navbar({ role }) {

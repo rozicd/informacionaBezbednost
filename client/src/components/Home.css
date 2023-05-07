@@ -12,8 +12,14 @@
   height: calc(100% - 40px);
   position: relative;
 }
-.size80
+.out-card-div
+{
+  padding: 10px;
+  padding: 10px;
+ width: fit-content;
+}
 
+.size80
 {
   position:relative;
   width: 80%;

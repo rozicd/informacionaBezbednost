@@ -23,6 +23,7 @@ function Requests({ role }) {
   if (user.role === 2) {
     try{
       response = await getAllRequest(currentPage);
+      console.log(response)
     }
     catch(error){
 
@@ -31,6 +32,7 @@ function Requests({ role }) {
   } else if (user.role === 1) {
     try{
       response = await getUsersRequest(user.id, currentPage);
+      console.log(response)
     }
     catch(error){
       
@@ -54,8 +56,6 @@ function Requests({ role }) {
       setEmail(data)
       console.log(data);
     } catch (error) {
-      console.log("KURCINA")
-      console.log("KURCINA")
       console.error(error);
 
     }
@@ -102,7 +102,7 @@ function Requests({ role }) {
 
   }, [email,currentPage]);
 
-  const totalPages = Math.ceil(totalItems / pageSize);  
+  const totalPages = Math.ceil(totalItems / 10);  
 
   return (
      <>

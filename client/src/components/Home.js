@@ -50,9 +50,12 @@ function Home() {
           <h1 className="card-header">Home</h1>
           <div className="home-div">
             <Navbar role = {user.role}/>
-            
-            <div className='home-content'>
-              <Outlet></Outlet>
+
+                <div className='home-content'>
+              <div className="card out-card-div">
+              <Outlet />
+              </div>
+
             </div>
           </div>
           

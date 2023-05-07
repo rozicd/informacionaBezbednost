@@ -51,15 +51,13 @@ namespace IB_projekat.Requests.Controller
         public async Task<ActionResult<PaginationResponse<Request>>> GetByUserId(int userId, [FromQuery] int page = 1, [FromQuery] int pageSzie = 10)
         {
             var request = await _requestService.GetRequestsByCertificateSerialNumber(userId, page, pageSzie);
-            var total = request.Count();
-            return Ok(new PaginationResponse<Request>(request, page, pageSzie, total));
+            return Ok(request);
         }
         [HttpGet("all")]
         public async Task<ActionResult<PaginationResponse<Request>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSzie = 10)
         {
             var request = await _requestService.GetAll(page, pageSzie);
-            var total = request.Count();
-            return Ok(new PaginationResponse<Request>(request, page, pageSzie, total));
+            return Ok(request);
         }
 
     }
