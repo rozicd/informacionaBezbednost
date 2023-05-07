@@ -24,6 +24,31 @@ namespace IB_projekat.Certificates.Controller
             return await _certificateService.GetAll();
         }*/
 
+        [HttpGet("download/{serialNumber}")]
+        [Authorize(Policy = "AuthorizedOnly")]
+        public async Task<IActionResult> DownloadCertificate(string serialNumber)
+        {
+            Certificate cert = await _certificateService.GetCertificateBySerialNumber(serialNumber);
+            if (cert == null)
+            {
+                return BadRequest("No such certificate exists");
+            }
+
+            // Find the certificate file
+            string certFilePath = $"certs/{serialNumber}.crt";
+            if (!System.IO.File.Exists(certFilePath))
+            {
+                return BadRequest("Certificate not found");
+            }
+
+            // Return the certificate file as a response
+            FileStream fileStream = new FileStream(certFilePath, FileMode.Open, FileAccess.Read);
+            return new FileStreamResult(fileStream, "application/x-x509-ca-cert")
+            {
+                FileDownloadName = $"{serialNumber}.crt"
+            };
+        }
+
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<Certificate>>> GetAllCertificatesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
