@@ -8,5 +8,7 @@
         Task<List<Request>> GetAll(int page, int pageSize);
         Task<List<Request>> GetByUsersId(int id);
         Task<List<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize);
+        Task<int> GetTotalCountForUser(int userId);
+        Task<int> GetRequestsCount();
     }
 }

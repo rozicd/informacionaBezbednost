@@ -28,6 +28,7 @@ builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 
+
 builder.Services.AddScoped<IUserRepository<User>, UserRepository<User>>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();

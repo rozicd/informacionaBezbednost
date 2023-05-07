@@ -30,7 +30,17 @@ namespace IB_projekat.Requests.Repository
                 .ToListAsync();
 
         }
+        public async Task<int> GetRequestsCount()
+        {
+            return await _context.Requests.CountAsync();
+        }
 
+        public async Task<int> GetTotalCountForUser(int userId)
+        {
+            return await _context.Requests
+                .Where(r => r.User.Id == userId)
+                .CountAsync();
+        }
         public async Task<Request> GetById(int id)
         {
             return await _context.Requests.Include(u=>u.User).FirstOrDefaultAsync(r => r.Id == id);
