@@ -16,4 +16,19 @@ async function getAllRequest(page) {
     return response.data;
   }
 
-  export {getAllRequest, getUsersRequest}
+  async function acceptRequest(cerId) {
+    const response = await axios.put(`${API_BASE_URL}/accept/${cerId}`, {
+      withCredentials: true
+    });
+    return response;
+  }
+
+  async function declineRequest(cerId) {
+    const response = await axios.put(`${API_BASE_URL}/decline/${cerId}`, {
+      withCredentials: true
+    });
+    return response;
+  }
+
+
+  export {getAllRequest, getUsersRequest, acceptRequest, declineRequest}
