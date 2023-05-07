@@ -8,7 +8,7 @@ namespace IB_projekat.Certificates.Service
     {
         Task<IEnumerable<Certificate>> GetAll();
         Task<bool> VerifyCertificate(string certificateSerialNumber);
-        Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo);
+        Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo,CertificateType type);
         Task<bool> ValidateCert(string serialNumber);
         Task<bool> ValidateCertFile(X509Certificate2 certificateBytes);
         Task<bool> RevokeCert(string serialNumber);

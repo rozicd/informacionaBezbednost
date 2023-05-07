@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logOut } from '../services/authService';
 import AdminMenu from './AdminMenu';
+import UserMenu from './UserMenu';
 
 function Navbar({ role }) {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function Navbar({ role }) {
     <nav>
       <div className="home-navbar">
         {role === 2 && <AdminMenu />}
+        {role === 1 && <UserMenu />}
         <button className='btn' onClick={handleSignOut}>Sign Out</button>        
       </div>
     </nav>

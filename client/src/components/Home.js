@@ -26,7 +26,6 @@ function Home() {
 
   async function getUser() {
     try {
-      console.log("kurcina")
       console.log(email)
       const data = await GetUserByEmail(email);
       setUser(data);
@@ -52,8 +51,8 @@ function Home() {
           <div className="home-div">
             <Navbar role = {user.role}/>
             
-            <div>
-              <Outlet />
+            <div className='home-content'>
+              <Outlet></Outlet>
             </div>
           </div>
           

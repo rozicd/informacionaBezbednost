@@ -38,12 +38,12 @@ namespace IB_projekat.Certificates.Service
         }
 
 
-        public async Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo)
+        public async Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo,CertificateType type)
         {
             await Validate(issuerSN, user, keyUsageFlags, validTo);
             var cert = GenerateCertificate();
 
-            var returnedCertificate = await ExportGeneratedCertificate(cert);
+            var returnedCertificate = await ExportGeneratedCertificate(cert, type);
             return returnedCertificate;
         }
 
@@ -96,17 +96,13 @@ namespace IB_projekat.Certificates.Service
             return generatedCertificate;
         }
 
-        private async Task<Certificate> ExportGeneratedCertificate(X509Certificate2 cert)
+        private async Task<Certificate> ExportGeneratedCertificate(X509Certificate2 cert,CertificateType type)
         {
             var certificateForDb = new Certificate()
             {
                 Issuer = issuer?.SerialNumber,
                 Status = CertificateStatus.Valid,
-                CertificateType = isAuthority
-                    ? issuerCertificate == null
-                        ? CertificateType.Root
-                        : CertificateType.Intermediate
-                    : CertificateType.End,
+                CertificateType = type,
                 SerialNumber = cert.SerialNumber,
                 SignatureAlgorithm = cert.SignatureAlgorithm.FriendlyName ?? "Unknown",
                 User = subject,
