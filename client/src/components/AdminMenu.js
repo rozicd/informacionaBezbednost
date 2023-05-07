@@ -13,10 +13,10 @@ function AdminMenu() {
         <Link to="certificates">
             <button className='btn'>Certificates</button>
         </Link>
-        
-            <button onClick={() => navigate('verify')} className="btn">
-              Verify
-            </button>
+
+        <Link to="verify">
+            <button className='btn'>Verify</button>
+        </Link>
     </div>
     </>
   );

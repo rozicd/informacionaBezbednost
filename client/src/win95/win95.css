@@ -157,6 +157,11 @@ Scrollbar (only chrome & safari)
     Button styles
 
 */
+.revoke-btn
+{
+    background-color: red !important;
+    color: white!important;
+}
 .btn{
     border-width: 2px;
     border-style: outset;
@@ -241,6 +246,7 @@ CARDS
     background: #08216b;
     /* OR #000082 is better?*/
 }
+
 .card-header{
     background: -webkit-linear-gradient(left,#08216b,#a5cef7);
     color: #fff;

@@ -52,8 +52,10 @@ function Home() {
           <div className="home-div">
             <Navbar role = {user.role}/>
             
-            <div>
+            <div  className="outlet-div">
+              <div className="card out-card-div">
               <Outlet />
+              </div>
             </div>
           </div>
           

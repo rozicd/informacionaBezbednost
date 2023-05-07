@@ -179,6 +179,7 @@ namespace IB_projekat.Certificates.Service
             {
                 return false;
             }
+            if (certDB.Status != CertificateStatus.Valid) return false;
             X509Certificate2 cert;
             using (RSA rsa = RSA.Create())
             {
@@ -222,6 +223,7 @@ namespace IB_projekat.Certificates.Service
             {
                 return false;
             }
+            if (certDB.Status != CertificateStatus.Valid) return false;
             using (RSA rsa = RSA.Create())
             {
                 try

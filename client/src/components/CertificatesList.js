@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getCertificates from '../services/certificateService';
+import {RevokeCert} from "../services/certService";
 import axios from 'axios';
 
 function Certificates() {
@@ -10,13 +11,12 @@ function Certificates() {
 
   useEffect(() => {
     const fetchCertificates = async () => {
-    try{
+      try {
         const response = await getCertificates(currentPage);
         setCertificates(response.items);
         setTotalItems(response.totalItems);
-    }
-      catch(error){
-
+      } catch (error) {
+        console.error(error);
       }
     };
     fetchCertificates();
@@ -28,40 +28,53 @@ function Certificates() {
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
+  const handleButtonClick = async (serialNumber) => {
+    // Do something with the serial number, like send it to a server
+    await RevokeCert(serialNumber);
+  };
+
   return (
-    <div>
-      <table>
-        <thead>
+      <div>
+        <table>
+          <thead>
           <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Issuer</th>
             <th>Expiration Date</th>
+            <th>Status</th>
+            <th>Action</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {certificates.map((certificate) => (
-            <tr key={certificate.id}>
-              <td>{certificate.id}</td>
-              <td>{certificate.serialNumber}</td>
-              <td>{certificate.issuer}</td>
-              <td>{certificate.validTo}</td>
-            </tr>
+              <tr key={certificate.id}>
+                <td>{certificate.id}</td>
+                <td>{certificate.serialNumber}</td>
+                <td>{certificate.issuer}</td>
+                <td>{certificate.validTo}</td>
+                <td>{certificate.status}</td>
+                <td>
+                  {certificate.status !== 2 && (
+                      <button className="btn revoke-btn" onClick={() => handleButtonClick(certificate.serialNumber)}>Revoke</button>
+                  )}
+                </td>
+              </tr>
           ))}
-        </tbody>
-      </table>
-      <div>
-        <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-          Previous
-        </button>
-        <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
-          Next
-        </button>
-        <span>
+          </tbody>
+        </table>
+        <div>
+          <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+            Previous
+          </button>
+          <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+            Next
+          </button>
+          <span>
           Page {currentPage} of {totalPages}
         </span>
+        </div>
       </div>
-    </div>
   );
 }
 

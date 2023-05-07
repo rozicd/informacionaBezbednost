@@ -1,6 +1,7 @@
 ﻿using IB_projekat.Certificates.Model;
 using IB_projekat.Certificates.Service;
 using IB_projekat.PaginatedResponseModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography.X509Certificates;
@@ -31,6 +32,7 @@ namespace IB_projekat.Certificates.Controller
             var response = new PaginationResponse<Certificate>(certificates, page, pageSize, total);
             return Ok(response);
         }
+        [Authorize(Policy = "AuthorizedOnly")]
 
         [HttpGet("validate/{serialNumber}")]
         public async Task<bool> ValidateCert(string serialNumber)
@@ -38,6 +40,7 @@ namespace IB_projekat.Certificates.Controller
             return await _certificateService.ValidateCert(serialNumber);
         }
 
+        [Authorize(Policy = "AuthorizedOnly")]
         [HttpPost("validate")]
         public async Task<IActionResult> ValidateCertFile([FromBody] byte[] certificateBytes)
         {
@@ -47,6 +50,7 @@ namespace IB_projekat.Certificates.Controller
         }
 
         [HttpDelete("revoke/{serialNumber}")]
+        [Authorize(Policy = "AuthorizedOnly")]
         public async Task<bool> RevokeCertFile(string serialNumber)
         {
 
