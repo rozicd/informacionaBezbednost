@@ -12,6 +12,7 @@ export default function LoginPage() {
     try {
         const data = await SignIn(username, password);
         console.log(data);
+        
         window.location.reload()
       } catch (error) {
         if(error.response.status == 401){

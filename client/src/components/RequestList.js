@@ -3,7 +3,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { checkCookieValidity, GetUserByEmail } from '../services/authService';
-import { getAllRequest, getUsersRequest } from '../services/requestService';
+import { getAllRequest, getUsersRequest, acceptRequest, declineRequest } from '../services/requestService';
 
 function Requests({ role }) {
 
@@ -23,7 +23,6 @@ function Requests({ role }) {
   if (user.role === 2) {
     try{
       response = await getAllRequest(currentPage);
-      console.log(response)
     }
     catch(error){
 
@@ -32,7 +31,6 @@ function Requests({ role }) {
   } else if (user.role === 1) {
     try{
       response = await getUsersRequest(user.id, currentPage);
-      console.log(response)
     }
     catch(error){
       
@@ -54,7 +52,7 @@ function Requests({ role }) {
       const data = await checkCookieValidity();
       
       setEmail(data)
-      console.log(data);
+      
     } catch (error) {
       console.error(error);
 
@@ -100,9 +98,26 @@ function Requests({ role }) {
     nesto()
     
 
-  }, [email,currentPage]);
+  }, [currentPage]);
 
-  const totalPages = Math.ceil(totalItems / 10);  
+  async function handleAccept(requestId){
+    try{
+      const acceptResponse = await acceptRequest(requestId)
+      window.alert(acceptResponse.data)
+    }catch(error){
+      window.alert(error)
+    }
+  }
+  async function handleDecline(requestId){
+    try{
+      const acceptResponse = await declineRequest(requestId)
+      window.alert(acceptResponse.data)
+    }catch(error){
+      window.alert(error)
+    }
+  }
+
+  const totalPages = Math.ceil(totalItems / pageSize);  
 
   return (
      <>
@@ -131,10 +146,10 @@ function Requests({ role }) {
               {request.status === 0 && 
               <>
                 <td>
-                  <button >Accept</button>
+                  <button onClick={() => handleAccept(request.id)}>Accept</button>
                 </td>
                 <td>
-                  <button >Decline</button>
+                <button onClick={() => handleDecline(request.id)}>Decline</button>
                 </td>
               </>}
             </tr>

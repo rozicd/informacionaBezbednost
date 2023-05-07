@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import getCertificates from '../services/certificateService';
-import {RevokeCert} from "../services/certService";
+import {DownloadCert, RevokeCert} from "../services/certService";
 import axios from 'axios';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import './CertificatesList.css';
@@ -75,14 +75,12 @@ function Certificates() {
   const totalPages = Math.ceil(totalItems / pageSize);
 
   const handleButtonClick = async (serialNumber) => {
-    // Do something with the serial number, like send it to a server
     await RevokeCert(serialNumber);
     setCurrentPage(2);
     setCurrentPage(1);
   };
   const handleDownloadButtonClick = async (serialNumber) => {
-    // Do something with the serial number, like send it to a server
-    console.log(serialNumber)
+    await DownloadCert(serialNumber)
   };
   return (
     <div className='center-list'>

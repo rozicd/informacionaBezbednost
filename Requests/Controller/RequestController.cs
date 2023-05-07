@@ -30,7 +30,14 @@ namespace IB_projekat.Requests.Controller
                 return BadRequest(ModelState);
             }
 
-            await _requestService.Create(requestDTO);
+            try
+            {
+                await _requestService.Create(requestDTO);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
 

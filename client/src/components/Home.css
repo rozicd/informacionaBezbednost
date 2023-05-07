@@ -20,6 +20,8 @@
   padding: 10px;
   display: flex;
   justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .size80
@@ -30,8 +32,7 @@
   min-height: 50%;
 
 }
-.home-content{
-}
+
   .home-title{
     margin-bottom:30px;
   }

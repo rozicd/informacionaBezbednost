@@ -616,17 +616,16 @@ TABLES
 
 */
 .table{
-    background: white;
-    border-color: #c0c0c0;
+    border-color: #696868;
 }
 .table-bordered{
-    border: 1px solid #c0c0c0;
+    border: 1px solid #696868;
 }
 .table-bordered td, .table-bordered th {
-    border: 1px solid #c0c0c0;
+    border: 1px solid #696868;
 }
 .table td, .table th {
     padding: .75rem;
     vertical-align: top;
-    border-top: 1px solid #c0c0c0;
+    border-top: 1px solid #696868;
 }

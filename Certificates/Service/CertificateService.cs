@@ -253,6 +253,11 @@ namespace IB_projekat.Certificates.Service
             return true;
         }
 
+        public async Task<Certificate> GetCertificateBySerialNumber(string serialNumber)
+        {
+            return await _certificateRepository.GetBySerialNumber(serialNumber);
+        }
+
         public async Task<bool> RevokeCert(string serialNumber, string userEmail)
         {
             Console.WriteLine(serialNumber);
