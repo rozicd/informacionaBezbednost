@@ -20,6 +20,16 @@ namespace IB_projekat.Requests.Controller
         [HttpPost]
         public async Task<IActionResult> AddRequest(RequestDTO requestDTO)
         {
+            if(requestDTO.SignitureSerialNumber == null && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
+            {
+                return BadRequest("Certificate needs to be signed by a serial number!!");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _requestService.Create(requestDTO);
             return Ok();
         }

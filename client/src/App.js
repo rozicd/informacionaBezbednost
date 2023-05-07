@@ -7,6 +7,7 @@ import SMSVerification from './components/SMSVerification';
 import ForgotPassword from './components/ForgotPassword';
 import Certificates from './components/CertificatesList';
 import Requests from './components/RequestList';
+import CreateCertificateRequest from './components/CreateCertificateRequest';
 
 import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
@@ -64,11 +65,11 @@ function App() {
                 }
                 
             >
-              <Route path="certificates" element={<Certificates/>}/>
+              <Route path="certificates" element={<Certificates/>}>
+                <Route path="create-request" element={<CreateCertificateRequest />}/>
+              </Route>
               <Route path="requests" element = {<Requests/>} />            
-            
-            <Route path="verify" element={<VerifyCert/>}/>
-
+              <Route path="verify" element={<VerifyCert/>}/>
             </Route>
             <Route
                 path="/verify-sms"

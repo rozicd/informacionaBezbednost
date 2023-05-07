@@ -69,6 +69,7 @@ header .container {
   position: relative;
   z-index: 2;
 }
+
 /*
 
 Scrollbar (only chrome & safari)
@@ -171,6 +172,12 @@ Scrollbar (only chrome & safari)
     transition: background-color 0.2s ease-in-out;
     width: 70px;
 }
+.menu-btn{
+    margin-right: 5px;
+}
+.btn-wide{
+    width:130px;
+  }
 .btn:hover {
     border: 2px inset #fff;
     background: silver;

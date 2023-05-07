@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import VerifyCert from "../services/certService";
+import {VerifyCert} from "../services/certService";
 
 function Verify() {
     const [file, setFile] = useState(null);

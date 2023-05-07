@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import getCertificates from '../services/certificateService';
+import axios from 'axios';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import './CertificatesList.css';
 
 function Certificates() {
   const [certificates, setCertificates] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
+  const [showOutlet, setShowOutlet] = useState(false);
+  const location = useLocation();
+
+  useEffect(() =>{
+    if(location.pathname == '/home/certificates'){
+      setShowOutlet(false);
+
+    }
+  },[location]);
 
   useEffect(() => {
+    setShowOutlet(false);
     const fetchCertificates = async () => {
     try{
         const response = await getCertificates(currentPage);
@@ -28,38 +41,43 @@ function Certificates() {
   const totalPages = Math.ceil(totalItems / pageSize);
 
   return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Issuer</th>
-            <th>Expiration Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {certificates.map((certificate) => (
-            <tr key={certificate.id}>
-              <td>{certificate.id}</td>
-              <td>{certificate.serialNumber}</td>
-              <td>{certificate.issuer}</td>
-              <td>{certificate.validTo}</td>
+    <div className='center-list'>
+      {!showOutlet && (
+      <><table className='table table-bordered'>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Issuer</th>
+              <th>Expiration Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div>
-        <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-          Previous
-        </button>
-        <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
-          Next
-        </button>
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-      </div>
+          </thead>
+          <tbody>
+            {certificates.map((certificate) => (
+              <tr key={certificate.id}>
+                <td>{certificate.id}</td>
+                <td>{certificate.serialNumber}</td>
+                <td>{certificate.issuer}</td>
+                <td>{certificate.validTo}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table><div>
+            <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
+              Previous
+            </button>
+            <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)}>
+              Next
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+          </div></>)}
+      
+      {showOutlet && <Outlet />}
+      <Link to="create-request">
+        <button className='btn btn-wide top-margin-button' onClick={() => setShowOutlet(!showOutlet)}>{showOutlet ? "Back" : "Create Certificate"}</button>
+      </Link>
     </div>
   );
 }

@@ -52,8 +52,10 @@ function Requests({ role }) {
       const data = await checkCookieValidity();
       
       setEmail(data)
-      
+      console.log(data);
     } catch (error) {
+      console.log("KURCINA")
+      console.log("KURCINA")
       console.error(error);
 
     }
@@ -98,14 +100,13 @@ function Requests({ role }) {
     nesto()
     
 
-  }, [currentPage]);
+  }, [email,currentPage]);
 
   const totalPages = Math.ceil(totalItems / pageSize);  
 
   return (
      <>
-      <h1 className='cmp'>LISTA ZAHTEVAAAA BATOOO</h1>
-      <table>
+      <table className='table table-bordered'>
         <thead>
           <tr>
             <th>ID</th>

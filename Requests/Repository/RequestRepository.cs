@@ -15,7 +15,8 @@ namespace IB_projekat.Requests.Repository
 
         public async Task Add(Request request)
         {
-            _context.Users.Attach(request.User);
+            var user = await _context.Users.FindAsync(request.User.Id);
+            request.User = _context.Entry(user).IsKeySet ? user : _context.Users.Attach(user).Entity;
             await _context.Requests.AddAsync(request);
             await _context.SaveChangesAsync();
         }
