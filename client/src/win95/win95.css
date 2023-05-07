@@ -22,7 +22,6 @@ body {
     font-family: "MS Sans Serif",Tahoma,Verdana,Segoe,sans-serif; 
     background: teal;
     color: white;
-    padding-bottom: 28px;
 }
 .bg-cloud{
     background-image: url(clouds2.jpg);
@@ -177,9 +176,7 @@ Scrollbar (only chrome & safari)
     transition: background-color 0.2s ease-in-out;
     width: 70px;
 }
-.menu-btn{
-    margin-right: 5px;
-}
+
 .btn-wide{
     width:130px;
   }
@@ -189,14 +186,7 @@ Scrollbar (only chrome & safari)
     color: #424242;
     box-shadow: -1px -1px #000;
 }
-.btn:focus {
-    border: 2px inset #fff !important;
-    background: silver;
-    color: #424242;
-    box-shadow: -1px -1px #000 !important;
-    outline: 0 !important;
-    background: url(background.bmp);
-}
+
 .btn:active {
     border: 2px inset #fff !important;
     color: #424242;
@@ -209,9 +199,7 @@ Scrollbar (only chrome & safari)
     padding-left: 8px;
     padding-right: 8px;
 }
-button:focus{
-    outline: 1px dotted;
-}
+
 .btn.disabled,.btn:disabled{
     cursor: default;
     background-color: silver;
@@ -628,17 +616,16 @@ TABLES
 
 */
 .table{
-    background: white;
-    border-color: #c0c0c0;
+    border-color: #696868;
 }
 .table-bordered{
-    border: 1px solid #c0c0c0;
+    border: 1px solid #696868;
 }
 .table-bordered td, .table-bordered th {
-    border: 1px solid #c0c0c0;
+    border: 1px solid #696868;
 }
 .table td, .table th {
     padding: .75rem;
     vertical-align: top;
-    border-top: 1px solid #c0c0c0;
+    border-top: 1px solid #696868;
 }

@@ -59,6 +59,14 @@ namespace IB_projekat.Requests.Service
                 return;
             }
             Certificate certificate = await _certificateRepository.GetBySerialNumber(request.SignitureSerialNumber);
+            if(certificate.CertificateType == CertificateType.End)
+            {
+                throw new Exception("End certificates cannot issue certificates!");
+            }
+            if(certificate.CertificateType == CertificateType.Intermediate && requestDTO.CertificateType == CertificateType.Root)
+            {
+                throw new Exception("Intermediate certificates cannot issue root certificates!");
+            }
             if (request.User.Id == certificate.User.Id)
             {
                 await Accept(request.Id);

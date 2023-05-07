@@ -8,26 +8,31 @@
 
 .home-div
 {
+
   width: 100%;
-  height: calc(100% - 40px);
+  height: fit-content;
   position: relative;
 }
+
 .out-card-div
 {
   padding: 10px;
   padding: 10px;
- width: fit-content;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .size80
 {
   position:relative;
-  width: 80%;
-  height: 80%;
+  width: 1150px;
+  height: fit-content;
+  min-height: 50%;
+
 }
-.home-content{
-  height: calc(100% - 65px);
-}
+
   .home-title{
     margin-bottom:30px;
   }
@@ -41,6 +46,7 @@
     top: 0;
     width: 100%;
     z-index: 1;
+
   }
 
   .home-navbar h1 {

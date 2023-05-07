@@ -2,7 +2,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { useState } from 'react';
 import {SignIn} from '../services/authService'
-import { DownloadCert } from '../services/certService';
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,7 +12,7 @@ export default function LoginPage() {
     try {
         const data = await SignIn(username, password);
         console.log(data);
-        await DownloadCert("00F6B8C2D85680844A8F18C56EE8C55A69")
+        
         window.location.reload()
       } catch (error) {
         if(error.response.status == 401){

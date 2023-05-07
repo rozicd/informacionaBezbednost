@@ -257,7 +257,8 @@ namespace IB_projekat.Certificates.Service
         {
             return await _certificateRepository.GetBySerialNumber(serialNumber);
         }
-        public async Task<bool> RevokeCert(string serialNumber)
+
+        public async Task<bool> RevokeCert(string serialNumber, string userEmail)
         {
             Console.WriteLine(serialNumber);
             Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
@@ -265,6 +266,12 @@ namespace IB_projekat.Certificates.Service
             {
                 return false;
             }
+            if (userEmail != null) { 
+            User user = await _userRepository.GetByEmail(userEmail);
+            if (!user.Role.Equals(UserType.Admin))
+                if (!user.Email.Equals(certDB.User.Email))
+                    return false;
+         }
             List<Certificate> issuedCertificates = new List<Certificate>();
             try
             {
@@ -276,7 +283,7 @@ namespace IB_projekat.Certificates.Service
             }
             foreach (Certificate cert in issuedCertificates)
             {
-                await RevokeCert(cert.SerialNumber);
+                await RevokeCert(cert.SerialNumber,null);
             }
             certDB.Status = CertificateStatus.Revoked;
             await _certificateRepository.Update(certDB);
