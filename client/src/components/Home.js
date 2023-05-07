@@ -26,8 +26,6 @@ function Home() {
 
   async function getUser() {
     try {
-      console.log("kurcina")
-      console.log(email)
       const data = await GetUserByEmail(email);
       setUser(data);
       

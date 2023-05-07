@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import getCertificates from '../services/certificateService';
-import axios from 'axios';
 
 function Certificates() {
   const [certificates, setCertificates] = useState([]);

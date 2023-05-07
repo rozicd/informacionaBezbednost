@@ -20,9 +20,14 @@ namespace IB_projekat.Requests.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Request>> GetAll()
+        public async Task<List<Request>> GetAll(int page, int pageSize)
         {
-            return await _context.Requests.ToListAsync();
+            return await _context.Requests
+                .Include(r => r.User)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
         }
 
         public async Task<Request> GetById(int id)
@@ -30,9 +35,32 @@ namespace IB_projekat.Requests.Repository
             return await _context.Requests.Include(u=>u.User).FirstOrDefaultAsync(r => r.Id == id);
         }
 
-        public async Task<IEnumerable<Request>> GetByUsersId(int id)
+        public async Task<List<Request>> GetByUsersId(int id)
         {
             return await _context.Requests.Where(r => r.User.Id == id).ToListAsync();
+        }
+
+        public async Task<List<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize)
+        {
+            var certificates = await _context.Certificates
+            .Where(c => c.User.Id == userId)
+            .ToListAsync();
+
+            var certificateSerialNumbers = certificates.Select(c => c.SerialNumber);
+
+            var requestsQuery = _context.Requests
+                .Include(r => r.User)
+                .Where(r => certificateSerialNumbers.Contains(r.SignitureSerialNumber));
+
+            var totalItems = await requestsQuery.CountAsync();
+
+            var requests = await requestsQuery
+                .OrderByDescending(r => r.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return requests;
         }
 
         public async Task Update(Request request)

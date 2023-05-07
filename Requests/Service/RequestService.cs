@@ -72,11 +72,19 @@ namespace IB_projekat.Requests.Service
             await _requestRepository.Update(request);
         }
 
-        public async Task<IEnumerable<Request>> GetByUserId(int id)
+        public async Task<List<Request>> GetByUserId(int id)
         {
             return await _requestRepository.GetByUsersId(id);
         }
 
-        
+        public async Task<List<Request>> GetRequestsByCertificateSerialNumber(int userId, int page, int pageSize)
+        {
+            return await _requestRepository.GetRequestsByCertificateSerialNumber(userId, page, pageSize);
+        }
+
+        public async Task<List<Request>> GetAll(int page, int pageSize)
+        {
+            return await _requestRepository.GetAll(page, pageSize);
+        }
     }
 }
