@@ -4,6 +4,7 @@ import {RevokeCert} from "../services/certService";
 import axios from 'axios';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import './CertificatesList.css';
+import {checkCookieValidity, GetUserByEmail} from "../services/authService";
 
 function Certificates() {
   const [certificates, setCertificates] = useState([]);
@@ -12,6 +13,39 @@ function Certificates() {
   const [totalItems, setTotalItems] = useState(0);
   const [showOutlet, setShowOutlet] = useState(false);
   const location = useLocation();
+  const [user, setUser] = useState('');
+  const [email, setEmail] = useState('');
+
+
+  async function checkAuthentication() {
+    try {
+      const data = await checkCookieValidity();
+
+      setEmail(data)
+
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  async function getUser() {
+    try {
+      const data = await GetUserByEmail(email);
+      setUser(data);
+
+
+    } catch (error) {
+
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthentication()
+    email && getUser();
+
+  }, [email]);
 
   useEffect(() =>{
     if(location.pathname == '/home/certificates'){
@@ -43,8 +77,13 @@ function Certificates() {
   const handleButtonClick = async (serialNumber) => {
     // Do something with the serial number, like send it to a server
     await RevokeCert(serialNumber);
+    setCurrentPage(2);
+    setCurrentPage(1);
   };
-
+  const handleDownloadButtonClick = async (serialNumber) => {
+    // Do something with the serial number, like send it to a server
+    console.log(serialNumber)
+  };
   return (
     <div className='center-list'>
       {!showOutlet && (
@@ -57,6 +96,8 @@ function Certificates() {
               <th>Expiration Date</th>
               <th>Status</th>
               <th>Action</th>
+              <th>Download</th>
+
             </tr>
           </thead>
           <tbody>
@@ -69,8 +110,15 @@ function Certificates() {
                 <td>{certificate.status}</td>
                 <td>
                   {certificate.status !== 2 && (
-                      <button className="btn revoke-btn" onClick={() => handleButtonClick(certificate.serialNumber)}>Revoke</button>
+                      (certificate.user.id == user.id || user.role === 2) ?
+                          <button className="btn revoke-btn" onClick={() => handleButtonClick(certificate.serialNumber)}>Revoke</button> :
+                          null
                   )}
+                </td>
+                <td>
+                  {
+                    <button className="btn revoke-btn" onClick={() => handleDownloadButtonClick(certificate.serialNumber)}>Download</button>
+                  }
                 </td>
               </tr>
             ))}

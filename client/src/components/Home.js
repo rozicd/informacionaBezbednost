@@ -47,7 +47,7 @@ function Home() {
 
       <div className="container">
         <main className="card size80">
-          <h1 className="card-header">Home</h1>
+          <h1 className="card-header card">Home</h1>
           <div className="home-div">
             <Navbar role = {user.role}/>
 
