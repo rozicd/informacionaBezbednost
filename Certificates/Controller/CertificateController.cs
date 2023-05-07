@@ -4,6 +4,7 @@ using IB_projekat.PaginatedResponseModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
 namespace IB_projekat.Certificates.Controller
@@ -53,8 +54,10 @@ namespace IB_projekat.Certificates.Controller
         [Authorize(Policy = "AuthorizedOnly")]
         public async Task<bool> RevokeCertFile(string serialNumber)
         {
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            Console.WriteLine(userEmail);
 
-            return await _certificateService.RevokeCert(serialNumber);
+            return await _certificateService.RevokeCert(serialNumber, userEmail);
         }
 
 
