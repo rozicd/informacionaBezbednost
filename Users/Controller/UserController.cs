@@ -71,11 +71,19 @@ namespace IB_projekat.Users.Controller
                 return BadRequest(ModelState);
             }
 
-            var user = await _userService.Authenticate(model.Username, model.Password);
-            if (user == null)
+            var passwordStatus = await _userService.Authenticate(model.Username, model.Password);
+            if (passwordStatus == PasswordStatus.INACTIVE)
             {
                 return Unauthorized();
             }
+            User user = await _userService.GetByEmail(model.Username);
+            if (passwordStatus == PasswordStatus.EXPIRED)
+            {
+                PasswordResetToken token = await _passwordResetTokenService.GenerateToken(user.Id);
+                string redirectUrl = "http://localhost:3000/reset-password?id=" + user.Id + "&token=" + token.Token;
+                return Ok(new { redirectUrl });
+            }
+
 
             var claims = new List<Claim>
             {
@@ -289,9 +297,15 @@ namespace IB_projekat.Users.Controller
                 await _passwordResetTokenService.DeleteToken(passwordResetToken);
                 return BadRequest("The password reset token has expired.");
             }
+            bool succes = await _userService.ResetUserPassword(user.Id, user, model.NewPassword);
+            if (!succes) 
+            {
+                return BadRequest("You cannot use the same password!");
+            }
 
             await _passwordResetTokenService.DeleteToken(passwordResetToken);
-            await _userService.ResetUserPassword(user.Id,user,model.NewPassword);
+            
+            
 
             return Ok("Password reset successfully.");
         }

@@ -425,10 +425,6 @@ input[type=number]:focus,
 [contenteditable].form-control:focus {
     outline: 0 !important;
 }
-input[type="radio"],input[type="checkbox"] {
-  position: absolute;
-  left: -9999px;
-}
 
 .form-check-label::before, .form-check-label::after {
   content: '';

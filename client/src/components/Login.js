@@ -12,9 +12,14 @@ export default function LoginPage() {
     try {
         const data = await SignIn(username, password);
         console.log(data);
-        
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      }
+      else {
         window.location.reload()
+      }
       } catch (error) {
+      console.log("XD")
         if(error.response.status == 401){
           setErrorMessage('Username or password is not correct!');
         }
