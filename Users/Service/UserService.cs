@@ -12,6 +12,7 @@ using System.Text;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
+
 namespace IB_projekat.Users.Service
 {
     public class UserService : IUserService
@@ -20,12 +21,14 @@ namespace IB_projekat.Users.Service
         private readonly IUserRepository<User> _userRepository;
         private readonly IActivationTokenService _activationTokenService;
         private readonly ISmsVerificationService _smsVerificationService;
+        private readonly IPasswordRepository _passwordRepository;
 
-        public UserService(IUserRepository<User> userRepository, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService)
+        public UserService(IUserRepository<User> userRepository, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService,IPasswordRepository passwordRepository)
         {
             _userRepository = userRepository;
             _activationTokenService = activationTokenService;
             _smsVerificationService = smsVerificationService;
+            _passwordRepository = passwordRepository;
         }
 
         public async Task AddUser(DTOS.CreateUserDTO userDTO)
@@ -45,6 +48,13 @@ namespace IB_projekat.Users.Service
             }
 
             await _userRepository.Add(user);
+            Password password = new Password();
+            password.DbPassword = user.Password;
+            password.User = user;
+            password.ExpirationDate = DateTime.Now.AddDays(30);
+            password.PasswordStatus = PasswordStatus.ACTIVE;
+            _passwordRepository.Add(password);
+
 
             if (userDTO.VerificationMethod == DTOS.VerificationMethodType.Email)
             {
@@ -62,7 +72,7 @@ namespace IB_projekat.Users.Service
         }
 
 
-        public async Task<User> Authenticate(string email, string password)
+        public async Task<PasswordStatus> Authenticate(string email, string password)
         {
             using (SHA256 sha256 = SHA256.Create())
             {
@@ -73,15 +83,25 @@ namespace IB_projekat.Users.Service
 
                 if (user == null)
                 {
-                    return null;
+                    return PasswordStatus.INACTIVE;
                 }
-
-                if (user.Password == hashedPasswordString)
+                Password pass = await _passwordRepository.GetByUserIdAndPassword(user.Id, hashedPasswordString);
+                if (pass == null)
                 {
-                    return user;
+                    return PasswordStatus.INACTIVE;
                 }
 
-                return null;
+                if (pass.PasswordStatus.Equals(PasswordStatus.ACTIVE))
+                {
+                    if (pass.ExpirationDate < DateTime.Now)
+                    {
+                        pass.PasswordStatus = PasswordStatus.EXPIRED;
+                        await _passwordRepository.Update(pass);
+                    }
+                }
+                return pass.PasswordStatus;
+                
+
             }
         }
 
@@ -187,7 +207,7 @@ namespace IB_projekat.Users.Service
             return await _userRepository.GetByEmail(email);
         }
 
-        public async Task ResetUserPassword(int id, User user, string newPassword)
+        public async Task<bool> ResetUserPassword(int id, User user, string newPassword)
         {
             using (SHA256 sha256 = SHA256.Create())
             {
@@ -195,7 +215,29 @@ namespace IB_projekat.Users.Service
                 string hashedPasswordString = Convert.ToBase64String(hashedPassword);
 
                 user.Password = hashedPasswordString;
+                IEnumerable<Password> password = await _passwordRepository.GetByUserId(user.Id);
+                foreach (Password p in password)
+                {
+                    if (hashedPasswordString.Equals(p.DbPassword))
+                    {
+                        return false;
+                    }
+        
+                }
+                foreach (Password p in password)
+                {
+                    p.PasswordStatus = PasswordStatus.INACTIVE;
+                    await _passwordRepository.Update(p);
+
+                }
+                Password newPass = new Password();
+                newPass.DbPassword = hashedPasswordString;
+                newPass.PasswordStatus = PasswordStatus.ACTIVE;
+                newPass.ExpirationDate = DateTime.Now.AddDays(30);
+                newPass.User = user;
+                await _passwordRepository.Add(newPass);
                 await UpdateUser(id, user);
+                return true;
 
             }
         }

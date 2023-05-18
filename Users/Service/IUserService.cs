@@ -7,12 +7,12 @@ namespace IB_projekat.Users.Service
     {
         Task AddUser(DTOS.CreateUserDTO user);
         Task<User> UpdateUser(int id, User user);
-        Task<User> Authenticate(string username, string password);
+        Task<PasswordStatus> Authenticate(string username, string password);
         Task<bool> UserExists(string email);
         Task<User> GetById(int id);
         Task DeleteUser(int id);
         Task<User> GetByEmail(string email);
         Task SendPasswordResetEmail(User user, PasswordResetToken token);
-        Task ResetUserPassword(int id, User user, string newPassword);
+        Task<bool> ResetUserPassword(int id, User user, string newPassword);
     }
 }

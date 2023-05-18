@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"), ServiceLifetime.Transient);
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;"), ServiceLifetime.Transient);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 
@@ -41,6 +41,7 @@ builder.Services.AddScoped<ISmsVerificationRepository, SmsVerificationRepository
 builder.Services.AddScoped<ISmsVerificationService, SmsVerificationService>();
 builder.Services.AddScoped<IPasswordResetTokenRepository, PasswordResetTokenRepository>();
 builder.Services.AddScoped<IPasswordResetTokenService, PasswordResetTokenService>();
+builder.Services.AddScoped<IPasswordRepository, PasswordRepository>();
 
 
 builder.Services.AddCors(options =>
@@ -100,6 +101,8 @@ builder.Services.AddControllers(options =>
 });
 
 var app = builder.Build();
+app.UseCors();
+
 
 // Configure the HTTP request pipeline.
 
@@ -109,6 +112,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors();
+
 
 app.Run();

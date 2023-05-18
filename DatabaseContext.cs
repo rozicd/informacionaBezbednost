@@ -16,6 +16,7 @@ namespace IB_projekat
         public DbSet<Request> Requests { get; set; }
         public DbSet<SmsVerificationCode> SmsVerificationCodes { get; set; }
         public DbSet<PasswordResetToken> passwordResetTokens { get; set; }
+        public DbSet<Password> passwords { get; set; }
 
         public DbSet<ActivationToken> ActivationTokens { get; set; }
 

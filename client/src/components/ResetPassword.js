@@ -60,7 +60,7 @@ const ResetPassword = React.memo(({ id, token }) => {
       navigate('/login');
     } catch (error) {
       console.log(error);
-      setErrorMessage('Failed to reset password');
+      setErrorMessage(error.response.data);
     }
   };
 
