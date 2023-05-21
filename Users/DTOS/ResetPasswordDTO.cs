@@ -12,5 +12,9 @@ namespace IB_projekat.Users.DTOS
 
         [Required]
         public string NewPassword { get; set; }
+
+
+        [Required]
+        public string RecaptchaToken { get; set; }
     }
 }

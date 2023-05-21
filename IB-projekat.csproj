@@ -39,6 +39,7 @@
   <ItemGroup>
     <Folder Include="Certificates\Controller\" />
     <Folder Include="Certificates\Service\" />
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

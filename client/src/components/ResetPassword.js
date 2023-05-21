@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkCookieValidity, checkResetPasswordToken, resetPassword } from '../services/authService';
+import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+
 import './ResetPassword.css';
 
 const ResetPassword = React.memo(({ id, token }) => {
@@ -8,6 +10,9 @@ const ResetPassword = React.memo(({ id, token }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [recaptcha, setRecaptcha] = useState('');
+  const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
+  
   const isMounted = useRef(false);
 
   const navigate = useNavigate();
@@ -46,6 +51,9 @@ const ResetPassword = React.memo(({ id, token }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setRefreshRecaptcha(r => !r);
+
+
     if (newPassword !== confirmPassword) {
       setErrorMessage('New password and confirm password do not match');
       return;
@@ -55,7 +63,7 @@ const ResetPassword = React.memo(({ id, token }) => {
         const searchParams = new URLSearchParams(window.location.search);
         const id = searchParams.get('id');
         const token = searchParams.get('token');
-      await resetPassword(id, token, newPassword);
+      await resetPassword(id, token, newPassword,recaptcha);
       alert('Password has been successfully reset');
       navigate('/login');
     } catch (error) {
@@ -64,6 +72,14 @@ const ResetPassword = React.memo(({ id, token }) => {
     }
   };
 
+
+  
+  const handleRecaptchaChange = (event) => {
+    console.log(event)
+    setRecaptcha(event);
+  };
+  const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
+
   return (
     <div className="reset-password-container">
         <div className="reset-password-main">
@@ -71,6 +87,7 @@ const ResetPassword = React.memo(({ id, token }) => {
             <div className="padding-20">
 
             <form className="reset-password-form" onSubmit={handleSubmit}>
+                {recaptchaComp}
                 <div className="reset-password-fieldset">
                 <label className="reset-password-label" htmlFor="new-password">New Password:</label>
                 <input

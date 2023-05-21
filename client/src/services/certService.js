@@ -47,7 +47,7 @@ async function DownloadCert(serialNumber) {
       // Handle error here
     }
   }
-async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags){
+async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags,recaptcha){
     console.log(certificateType)
     console.log(signatureSerialNumber)
     console.log(userId)
@@ -57,7 +57,8 @@ async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags
         certificateType,
         SignitureSerialNumber:signatureSerialNumber,
         userId,
-        flags
+        flags,
+        "RecaptchaToken":recaptcha
     }, {
         headers: {
             'Content-Type': 'application/json'

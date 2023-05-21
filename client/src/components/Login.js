@@ -1,16 +1,22 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {SignIn} from '../services/authService'
+import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [recaptcha, setRecaptcha] = useState('');
+  const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
+  
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setRefreshRecaptcha(r => !r);
     try {
-        const data = await SignIn(username, password);
+        const data = await SignIn(username, password,recaptcha);
         console.log(data);
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
@@ -19,12 +25,13 @@ export default function LoginPage() {
         window.location.reload()
       }
       } catch (error) {
-      console.log("XD")
+        console.log(error);
+        console.log("XD")
         if(error.response.status == 401){
           setErrorMessage('Username or password is not correct!');
         }
         else if(error.response.status == 400){
-          setErrorMessage('Not all fields are filled in!')
+          setErrorMessage(error.response.data)
         }
         else{
         setErrorMessage('An error occurred. Please try again later.');
@@ -40,6 +47,11 @@ export default function LoginPage() {
     setPassword(event.target.value);
   };
 
+  const handleRecaptchaChange = (event) => {
+    console.log(event)
+    setRecaptcha(event);
+  };
+  const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
 
   return (
     <div className='container'>
@@ -48,7 +60,7 @@ export default function LoginPage() {
         <h1 className='card-header'>Login</h1>
         <div className="padding-20">
         <form onSubmit={handleSubmit} className='form'>
-
+          {recaptchaComp}
           <div className='fieldset'>
             <label htmlFor="username" className='label'>
               Username:

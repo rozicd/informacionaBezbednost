@@ -9,5 +9,8 @@ namespace IB_projekat.Users.DTOS
 
         [Required]
         public string Password { get; set; }
+
+        [Required]
+        public string RecaptchaToken { get; set; }
     }
 }

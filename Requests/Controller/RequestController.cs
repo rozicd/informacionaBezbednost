@@ -2,6 +2,7 @@
 using IB_projekat.PaginatedResponseModel;
 using IB_projekat.Requests.Model;
 using IB_projekat.Requests.Service;
+using IB_projekat.tools;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 namespace IB_projekat.Requests.Controller
@@ -11,23 +12,32 @@ namespace IB_projekat.Requests.Controller
     public class RequestController : ControllerBase
     {
         private readonly IRequestService _requestService;
+        private readonly RecaptchaVerifier _recaptchaVerifier;
+
 
         public RequestController(IRequestService requestService)
         {
             _requestService = requestService;
+            _recaptchaVerifier = new RecaptchaVerifier(Environment.GetEnvironmentVariable("BACK_RECAPTCHA"));
+
         }
 
         [HttpPost]
         public async Task<IActionResult> AddRequest(RequestDTO requestDTO)
         {
-            if(requestDTO.SignitureSerialNumber == null && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
+            if (!await _recaptchaVerifier.VerifyRecaptcha(requestDTO.RecaptchaToken))
+            {
+                return BadRequest("Recaptcha is not valid!");
+            }
+
+            if (requestDTO.SignitureSerialNumber == null && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
             {
                 return BadRequest("Certificate needs to be signed by a serial number!!");
             }
 
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest("Not all fields are satisfied!");
             }
 
             try

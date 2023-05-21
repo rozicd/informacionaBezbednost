@@ -5,12 +5,16 @@ import App from './App';
 import './win95/win95.css'
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+      <GoogleReCaptchaProvider
+      reCaptchaKey="6LeaeyUmAAAAAHQjZgnbYTBC1XderWUWbZHGoQ-I">
+          <BrowserRouter>
+              <App/>
+          </BrowserRouter>
+      </GoogleReCaptchaProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

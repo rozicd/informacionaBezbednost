@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 
 const API_BASE_URL = 'http://localhost:8000/api/user';
 
-async function SignIn(username, password) {
+async function SignIn(username, password,recaptcha) {
   const response = await axios.post(`${API_BASE_URL}/login`, {
     username,
-    password
+    password,
+    "RecaptchaToken":recaptcha
   }, {
     withCredentials: true
   });
@@ -29,7 +30,7 @@ async function checkCookieValidity() {
   return response.data;
 }
 
-async function Register(email, name, surname, password, phoneNumber,verificationMethod) {
+async function Register(email, name, surname, password, phoneNumber,verificationMethod,recaptcha) {
   console.log(verificationMethod);
   const response = await axios.post(`${API_BASE_URL}/register`, {
     email,
@@ -37,7 +38,8 @@ async function Register(email, name, surname, password, phoneNumber,verification
     surname,
     password,
     phoneNumber,
-    verificationMethod
+    verificationMethod,
+    "RecaptchaToken":recaptcha
   }, {
     withCredentials: true
   });
@@ -66,15 +68,15 @@ async function activateSms(code)
     return response.data
 }
 
-async function SendResetMail(email)
+async function SendResetMail(email,recaptcha)
   {
-    const response = await axios.post('http://localhost:8000/api/user/forgotpassword',{email:email})
+    const response = await axios.post('http://localhost:8000/api/user/forgotpassword',{email:email,"RecaptchaToken":recaptcha})
     return response.data
 }
 
-async function resetPassword(id, token, newPassword)
+async function resetPassword(id, token, newPassword,recaptcha)
  {
-  const response = await axios.post(`http://localhost:8000/api/user/reset-password`, { Id:id,Token:token,NewPassword:newPassword });
+  const response = await axios.post(`http://localhost:8000/api/user/reset-password`, { Id:id,Token:token,NewPassword:newPassword,"RecaptchaToken":recaptcha});
   return response.data;
 }
 

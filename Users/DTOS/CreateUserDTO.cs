@@ -24,6 +24,9 @@ namespace IB_projekat.Users.DTOS
         [Required]
         public VerificationMethodType VerificationMethod { get; set; }
 
+        [Required]
+        public string RecaptchaToken { get; set; }
+
     }
 
 

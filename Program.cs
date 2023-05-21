@@ -24,7 +24,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;"), ServiceLifetime.Transient);
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;"), ServiceLifetime.Transient);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 
@@ -72,8 +72,8 @@ builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.C
                 return Task.CompletedTask;
             }
         };
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.SlidingExpiration = true;
+        options.SlidingExpiration = false; // Disable sliding expiration
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
     });
 
 builder.Services.AddAuthorization(options =>
