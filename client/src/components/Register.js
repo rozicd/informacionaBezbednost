@@ -1,7 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {Register} from '../services/authService'
+import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -10,12 +12,15 @@ export default function RegisterPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [verificationMethod, setVerificationMethod] = useState(0);
+  const [recaptcha, setRecaptcha] = useState('');
+  const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setRefreshRecaptcha(r => !r);
     try {
-      const response = await Register(email, name, surname, password, phoneNumber,verificationMethod);
+      const response = await Register(email, name, surname, password, phoneNumber,verificationMethod,recaptcha);
       window.alert("SUCCESSFULY REGISTERED")
         navigate('/login')
         setErrorMessage('');
@@ -56,6 +61,12 @@ export default function RegisterPage() {
   const handleVerificationMethodChange = (event) => {
     setVerificationMethod(Number(event.target.value));
   };
+
+  const handleRecaptchaChange = (event) => {
+    console.log(event)
+    setRecaptcha(event);
+  };
+  const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
 
   return (
     <div className={'container'}>
@@ -106,6 +117,7 @@ export default function RegisterPage() {
             <label htmlFor="sms" className='radio-label'>SMS</label>
           </div>
           {errorMessage && <p className='error'>{errorMessage}</p>}
+          {recaptchaComp}
           <div className='register-page-center-button'>
               <button type="submit" className='btn'>
               Register

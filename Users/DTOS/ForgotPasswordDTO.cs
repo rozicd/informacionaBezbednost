@@ -7,5 +7,9 @@ namespace IB_projekat.Users.DTOS
         [Required]
         public string Email { get; set; }
 
+
+        [Required]
+        public string RecaptchaToken { get; set; }
+
     }
 }

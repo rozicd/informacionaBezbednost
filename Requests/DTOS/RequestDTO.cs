@@ -15,5 +15,8 @@ namespace IB_projekat.Certificates.DTOS
         public int UserId { get; set; }
         [Required]
         public string Flags { get; set; }
+
+        [Required]
+        public string RecaptchaToken { get; set; }
     }
 }

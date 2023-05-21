@@ -9,14 +9,14 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [recaptcha, setRecaptcha] = useState('');
   const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
+  
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(recaptcha);
     setRefreshRecaptcha(r => !r);
     try {
-        const data = await SignIn(username, password);
+        const data = await SignIn(username, password,recaptcha);
         console.log(data);
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
@@ -25,12 +25,13 @@ export default function LoginPage() {
         window.location.reload()
       }
       } catch (error) {
+        console.log(error);
         console.log("XD")
         if(error.response.status == 401){
           setErrorMessage('Username or password is not correct!');
         }
         else if(error.response.status == 400){
-          setErrorMessage('Not all fields are filled in!')
+          setErrorMessage(error.response.data)
         }
         else{
         setErrorMessage('An error occurred. Please try again later.');

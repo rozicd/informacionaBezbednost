@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AddCertRequest } from '../services/certService';
 import { GetUserByEmail, checkCookieValidity } from '../services/authService';
+import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
 import './CreateCertificateRequest.css';
 
 function CreateCertificateRequest() {
@@ -10,6 +11,8 @@ function CreateCertificateRequest() {
 
   const [user, setUser] = useState({});
   const [email, setEmail] = useState('');
+  const [recaptcha, setRecaptcha] = useState('');
+  const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -38,25 +41,39 @@ function CreateCertificateRequest() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setRefreshRecaptcha(r => !r);
 
     try {
       const response = await AddCertRequest(
         certificateType,
         signatureSerialNumber,
         user.id,
-        flags
+        flags,
+        recaptcha
       );
 
 
       alert('Request added successfully!');
     } catch (error) {
       console.error(error);
-      setErrorMessage('Failed to add request!');
+      if(!error.response.data.errors){
+        setErrorMessage(error.response.data);
+      }
+      else{
+        setErrorMessage("Not all fields are filled in!");
+      }
     }
   };
 
+  const handleRecaptchaChange = (event) => {
+    setRecaptcha(event);
+  };
+  const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
+
+
   return (
     <form onSubmit={handleSubmit} className='center-form'>
+      {recaptchaComp}
       <div className ='fieldset'>
         <label htmlFor="signatureSerialNumber" className='cert-create-label'>Signature Serial Number</label>
         <input type="text" id="signatureSerialNumber" className='cert-create-input' value={signatureSerialNumber} onChange={(e) => setSignatureSerialNumber(e.target.value)} />

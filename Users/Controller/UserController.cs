@@ -13,6 +13,7 @@ using IB_projekat.SmsVerification.Service;
 using IB_projekat.SmsVerification.Model;
 using IB_projekat.PasswordResetTokens.Service;
 using IB_projekat.PasswordResetTokens.Model;
+using IB_projekat.tools;
 
 namespace IB_projekat.Users.Controller
 {
@@ -24,6 +25,7 @@ namespace IB_projekat.Users.Controller
         private readonly IActivationTokenService _activationTokenService;
         private readonly ISmsVerificationService _smsVerificationService;
         private readonly IPasswordResetTokenService _passwordResetTokenService;
+        private readonly RecaptchaVerifier _recaptchaVerifier;
 
         public UserController(IUserService userService, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService, IPasswordResetTokenService passwordResetTokenService)
         {
@@ -31,12 +33,18 @@ namespace IB_projekat.Users.Controller
             _activationTokenService = activationTokenService;
             _smsVerificationService = smsVerificationService;
             _passwordResetTokenService = passwordResetTokenService;
+            _recaptchaVerifier = new RecaptchaVerifier(Environment.GetEnvironmentVariable("BACK_RECAPTCHA"));
+
 
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> AddUser(DTOS.CreateUserDTO user)
         {
+            if (!await _recaptchaVerifier.VerifyRecaptcha(user.RecaptchaToken))
+            {
+                return BadRequest("Recaptcha is not valid!");
+            }
 
             if (!_userService.UserExists(user.Email).Result)
             {
@@ -66,6 +74,11 @@ namespace IB_projekat.Users.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
+            if (! await _recaptchaVerifier.VerifyRecaptcha(model.RecaptchaToken))
+            {
+                return BadRequest("Recaptcha is not valid!");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -214,6 +227,10 @@ namespace IB_projekat.Users.Controller
         [HttpPost("forgotpassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPassword)
         {
+            if (!await _recaptchaVerifier.VerifyRecaptcha(forgotPassword.RecaptchaToken))
+            {
+                return BadRequest("Recaptcha is not valid!");
+            }
             // Validate the input
             if (!ModelState.IsValid)
             {
@@ -274,6 +291,11 @@ namespace IB_projekat.Users.Controller
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
         {
+            if (!await _recaptchaVerifier.VerifyRecaptcha(model.RecaptchaToken))
+            {
+                return BadRequest("Recaptcha is not valid!");
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

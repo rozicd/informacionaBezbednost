@@ -2,17 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate
  } from 'react-router';
 import { SendResetMail } from '../services/authService';
+import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
+
+
 function ForgotPassword(props) {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [recaptcha, setRecaptcha] = useState('');
+  const [refreshRecaptcha, setRefreshRecaptcha] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setRefreshRecaptcha(r => !r);
+
 
     if(errorMessage == ''){
         try {
-        const response = await SendResetMail(email);
+        const response = await SendResetMail(email,recaptcha);
         window.alert("An email has been sent with the password reset link");
         setErrorMessage('')
         navigate('/login');
@@ -42,6 +50,14 @@ function ForgotPassword(props) {
         setErrorMessage('Please enter a valid email address');
     }
   };
+
+  const handleRecaptchaChange = (event) => {
+    console.log(event)
+    setRecaptcha(event);
+  };
+  const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
+
+
   return (
     <div className='container'>
       <main className='card'>
@@ -49,6 +65,8 @@ function ForgotPassword(props) {
           <div className="padding-20">
 
           <form onSubmit={handleSubmit} className='form'>
+          {recaptchaComp}
+
           <div className='fieldset'>
             <label htmlFor="email" className='label'>
               Email:

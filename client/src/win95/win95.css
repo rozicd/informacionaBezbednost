@@ -426,6 +426,9 @@ input[type=number]:focus,
     outline: 0 !important;
 }
 
+.error{
+    text-align: center;
+}
 .form-check-label::before, .form-check-label::after {
   content: '';
   position: absolute;
