@@ -72,8 +72,8 @@ builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.C
                 return Task.CompletedTask;
             }
         };
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.SlidingExpiration = true;
+        options.SlidingExpiration = false; // Disable sliding expiration
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
     });
 
 builder.Services.AddAuthorization(options =>
