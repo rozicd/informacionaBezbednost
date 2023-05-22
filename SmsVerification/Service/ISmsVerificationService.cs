@@ -6,9 +6,9 @@ namespace IB_projekat.SmsVerification.Service
     {
 
         bool VerifyCode(string codeValue, string storedCode);
-        Task<SmsVerificationCode> GenerateCode(int userId);
+        Task<SmsVerificationCode> GenerateCode(int userId,VerificationType type);
         Task DeleteCode(SmsVerificationCode smsCode);
-        SmsVerificationCode GetCodeByCodeValue(string codeValue);
+        SmsVerificationCode GetCodeByCodeValueAndType(string codeValue,VerificationType type);
         Task<List<SmsVerificationCode>> GetCodesByUserId(int userId);
 
     }

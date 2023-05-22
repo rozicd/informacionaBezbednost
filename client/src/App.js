@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import {Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
@@ -13,18 +13,30 @@ import { useState, useEffect } from 'react';
 import {checkCookieValidity} from './services/authService'
 import ResetPassword from './components/ResetPassword';
 import VerifyCert from "./components/VerifyCert";
+import TwoFactorAuthentication from "./components/2FA";
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [is2FAuthenticated, setIs2FAuthenticated] = useState(false);
+    let navigate = useNavigate();
+
     const [data, setData] = useState('')
     async function checkAuthentication() {
       try {
         const data = await checkCookieValidity();
         setData(data)
         setIsAuthenticated(true)
+          setIs2FAuthenticated(false)
       } catch (error) {
+          if(error.response.status == 403)
+          {
+              setIs2FAuthenticated(true)
+              navigate("2fa")
+
+          }
         console.error(error);
         setIsAuthenticated(false);
+
       }
     }
     useEffect(() => {   
@@ -43,9 +55,28 @@ function App() {
             <Route
                 path="/login"
                 element={
-                    isAuthenticated ? <Navigate to="/home" /> : <Login />
+                    isAuthenticated ? (
+                        <Navigate to="/home" />
+                    ) : is2FAuthenticated ? (
+                        <Navigate to="/2fa" />
+                    ) : (
+                        <Login />
+                    )
                 }
             />
+            <Route
+                path="/2fa"
+                element={
+                    isAuthenticated ? (
+                        <Navigate to="/home" />
+                    ) : is2FAuthenticated ? (
+                        <TwoFactorAuthentication />
+                    ) : (
+                        <Navigate to="/login" replace />
+                    )
+                }
+            />
+
             <Route
                 path="/register"
                 element={

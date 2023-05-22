@@ -6,7 +6,7 @@ namespace IB_projekat.SmsVerification.Repository
     {
         Task AddOne(SmsVerificationCode smsCode);
         Task DeleteOne(SmsVerificationCode smsCode);
-        Task<SmsVerificationCode> GetByCode(string code);
+        Task<SmsVerificationCode> GetByCodeAndType(string code,VerificationType type);
         Task<List<SmsVerificationCode>> GetByUserId(int userId);
 
     }

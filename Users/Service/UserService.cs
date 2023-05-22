@@ -63,7 +63,7 @@ namespace IB_projekat.Users.Service
             }
             else
             {
-                SmsVerificationCode code = await _smsVerificationService.GenerateCode(user.Id);
+                SmsVerificationCode code = await _smsVerificationService.GenerateCode(user.Id, VerificationType.VERIFICATION);
                 await SendActivationSMS(user, code);
             }
 
@@ -240,6 +240,42 @@ namespace IB_projekat.Users.Service
                 return true;
 
             }
+        }
+
+        public async Task<bool> TwoFactorAuthentication(string email)
+        {
+            User user = await _userRepository.GetByEmail(email);
+
+            SmsVerificationCode code = await _smsVerificationService.GenerateCode(user.Id,VerificationType.TWO_FACTOR);
+            await Send2FA(user, code);
+
+            return true;
+
+        }
+
+        static async Task Send2FA(User user, SmsVerificationCode code)
+        {
+            var apiKey = Environment.GetEnvironmentVariable("SEND_GRID_API_KEY");
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("ibprojekat@gmail.com", "IB support");
+            var subject = "Test";
+            var to = new EmailAddress(user.Email, "Example User");
+            var plainTextContent = "test";
+            var htmlContent = File.ReadAllText("Resources/2fa.html");
+            var newHtmlContent = htmlContent.Replace("{{action_url}}",code.Code);
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, newHtmlContent);
+            var response = await client.SendEmailAsync(msg);
+        }
+
+        public async Task<bool> TwoFactorAuthenticationSMS(string email)
+        {
+            User user = await _userRepository.GetByEmail(email);
+
+            SmsVerificationCode code = await _smsVerificationService.GenerateCode(user.Id, VerificationType.TWO_FACTOR);
+            SendActivationSMS(user, code);
+            return true;
+
         }
     }
 }

@@ -14,6 +14,7 @@ using IB_projekat.SmsVerification.Model;
 using IB_projekat.PasswordResetTokens.Service;
 using IB_projekat.PasswordResetTokens.Model;
 using IB_projekat.tools;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IB_projekat.Users.Controller
 {
@@ -102,6 +103,7 @@ namespace IB_projekat.Users.Controller
             {
                 new Claim(ClaimTypes.Name, user.Email.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("TwoFactorVerified", "false")
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -120,6 +122,10 @@ namespace IB_projekat.Users.Controller
         {
             // Only users with the Authorized or Admin role can access this action
             var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            if (User.FindFirstValue("TwoFactorVerified") == "false")
+            {
+                return Forbid();
+            }
             return Ok(userEmail);
         }
 
@@ -166,13 +172,10 @@ namespace IB_projekat.Users.Controller
 
             return Ok();
         }
-
-
-
-        [HttpPost("activateSms/{code}")]
-        public async Task<IActionResult> ActivateUserSms(string code)
+        [HttpPost("2fa/activate/{code}")]
+        public async Task<IActionResult> Activate2fa(string code)
         {
-            SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValue(code);
+            SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValueAndType(code, VerificationType.TWO_FACTOR);
             if (smsVerificationCode == null)
             {
                 return NotFound();
@@ -189,7 +192,72 @@ namespace IB_projekat.Users.Controller
             var validTokenFound = false;
             foreach (var smsCode in smsCodes)
             {
-                if (smsCode.Expires >= DateTime.Now && _smsVerificationService.VerifyCode(code, smsCode.Code))
+                if (smsCode.type.Equals(VerificationType.TWO_FACTOR) && smsCode.Expires >= DateTime.Now && _smsVerificationService.VerifyCode(code, smsCode.Code))
+                {
+                    validTokenFound = true;
+                    break;
+                }
+            }
+            if (!validTokenFound)
+            {
+                foreach (var smsCode in smsCodes)
+                {
+                    await _smsVerificationService.DeleteCode(smsCode);
+                }
+
+                
+                return BadRequest("Invalid or expired sms activation token");
+            }
+
+           
+            
+            foreach (var smsCode in smsCodes)
+            {
+                await _smsVerificationService.DeleteCode(smsCode);
+            }
+
+            var claimsPrincipal = HttpContext.User as ClaimsPrincipal;
+            var identity = claimsPrincipal.Identity as ClaimsIdentity;
+
+            var existingClaim = identity.FindFirst("TwoFactorVerified");
+            if (existingClaim != null)
+            {
+                identity.RemoveClaim(existingClaim);
+            }
+
+            identity.AddClaim(new Claim("TwoFactorVerified", "true"));
+
+            await HttpContext.SignInAsync(claimsPrincipal);
+
+           
+            return Ok();
+        }
+
+       
+
+
+
+            [HttpPost("activateSms/{code}")]
+        public async Task<IActionResult> ActivateUserSms(string code)
+        {
+            SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValueAndType(code,VerificationType.VERIFICATION);
+            if (smsVerificationCode == null)
+            {
+                return NotFound();
+            }
+
+            User user = await _userService.GetById(smsVerificationCode.UserId);
+            if (user == null)
+            {
+                await _smsVerificationService.DeleteCode(smsVerificationCode);
+                return NotFound();
+            }
+
+            List<SmsVerificationCode> smsCodes = await _smsVerificationService.GetCodesByUserId(smsVerificationCode.UserId);
+            var validTokenFound = false;
+            foreach (var smsCode in smsCodes)
+            {
+                if (smsCode.type.Equals(VerificationType.VERIFICATION) && smsCode.Expires >= DateTime.Now && _smsVerificationService.VerifyCode(code, smsCode.Code))
                 {
                     validTokenFound = true;
                     break;
@@ -280,6 +348,25 @@ namespace IB_projekat.Users.Controller
         {
             User user = await _userService.GetByEmail(userEmailDTO.email);
             return user;
+        }
+        
+
+        [HttpPost("2fa/{type}")]
+        [Authorize(Policy ="AuthorizedOnly")]
+        public async Task<IActionResult> TwoFactorAuthentication(string type)
+        {
+
+            string email = User.FindFirstValue(ClaimTypes.Name);
+            if (type == "email")
+            {
+                bool twofa = await _userService.TwoFactorAuthentication(email);
+            }
+            else
+            {
+                bool twofa = await _userService.TwoFactorAuthenticationSMS(email);
+            }
+
+            return Ok();
         }
 
 

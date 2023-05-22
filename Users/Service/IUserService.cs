@@ -14,5 +14,8 @@ namespace IB_projekat.Users.Service
         Task<User> GetByEmail(string email);
         Task SendPasswordResetEmail(User user, PasswordResetToken token);
         Task<bool> ResetUserPassword(int id, User user, string newPassword);
+
+        Task<bool> TwoFactorAuthentication(string email);
+        Task<bool> TwoFactorAuthenticationSMS(string email);
     }
 }
