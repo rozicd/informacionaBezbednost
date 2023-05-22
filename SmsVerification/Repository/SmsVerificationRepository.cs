@@ -26,9 +26,9 @@ namespace IB_projekat.SmsVerification.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<SmsVerificationCode> GetByCode(string code)
+        public async Task<SmsVerificationCode> GetByCodeAndType(string code,VerificationType type )
         {
-            return await _context.SmsVerificationCodes.SingleOrDefaultAsync(r => r.Code == code);
+            return await _context.SmsVerificationCodes.SingleOrDefaultAsync(r => r.Code == code && r.type == type);
         }
 
         public async Task<List<SmsVerificationCode>> GetByUserId(int userId)

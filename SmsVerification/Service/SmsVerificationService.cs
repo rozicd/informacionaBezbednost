@@ -21,12 +21,13 @@ namespace IB_projekat.SmsVerification.Service
             return string.Equals(codeValue, storedCode, StringComparison.Ordinal);
         }
 
-        public async Task<SmsVerificationCode> GenerateCode(int userId)
+        public async Task<SmsVerificationCode> GenerateCode(int userId,VerificationType type)
         {
             var randomInt = new Random().Next(100000, 999999); // generate random integer between 100000 and 999999
             var codeValue = randomInt.ToString();
             var expires = DateTime.Now.AddMinutes(ExpirationTimeMinutes);
             var code = new SmsVerificationCode { Code = codeValue, Expires = expires, UserId = userId };
+            code.type = type;
             await _smsVerificationRepository.AddOne(code);
             return code;
         }
@@ -36,9 +37,9 @@ namespace IB_projekat.SmsVerification.Service
             await _smsVerificationRepository.DeleteOne(smsCode);
         }
 
-        public SmsVerificationCode GetCodeByCodeValue(string codeValue)
+        public SmsVerificationCode GetCodeByCodeValueAndType(string codeValue,VerificationType type)
         {
-            return _smsVerificationRepository.GetByCode(codeValue).Result;
+            return _smsVerificationRepository.GetByCodeAndType(codeValue,type).Result;
         }
 
         public async Task<List<SmsVerificationCode>> GetCodesByUserId(int userId)

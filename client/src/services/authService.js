@@ -68,6 +68,33 @@ async function activateSms(code)
     return response.data
 }
 
+
+
+async function SendTwoFactorCode()
+{
+  const response = await axios.post('http://localhost:8000/api/user/2fa/email',{},{
+    withCredentials: true
+  });
+  return response.data
+}
+
+async function SendTwoFactorCodeSMS()
+{
+  const response = await axios.post('http://localhost:8000/api/user/2fa/sms',{},{
+    withCredentials: true
+  });
+  return response.data
+}
+
+
+async function ActivateTwoFactorCode(code)
+{
+  const response = await axios.post('http://localhost:8000/api/user/2fa/activate/'+code,{},{
+    withCredentials: true
+  });
+  return response.data
+}
+
 async function SendResetMail(email,recaptcha)
   {
     const response = await axios.post('http://localhost:8000/api/user/forgotpassword',{email:email,"RecaptchaToken":recaptcha})
@@ -85,4 +112,4 @@ async function checkResetPasswordToken(token)
   const response = await axios.post(`http://localhost:8000/api/user/verify-password-reset-token/${token}`);
   return response.data;
 }
-export { SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken, GetUserByEmail};
+export { SendTwoFactorCodeSMS,ActivateTwoFactorCode,SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken, GetUserByEmail,SendTwoFactorCode};
