@@ -54,10 +54,13 @@ namespace IB_projekat.Users.Controller
             if (!_userService.UserExists(user.Email).Result)
             {
                 await _userService.AddUser(user);
+                _logger.Information("New user registered - Email: {Email}", user.Email);
+
                 return Ok();
             }
             else
             {
+                _logger.Information("Registration failed - User with the same email already exists - Email: {Email}", user.Email);
                 return Conflict("USER WITH THIS EMAIL ALREADY EXISTS");
             }
             
@@ -70,8 +73,12 @@ namespace IB_projekat.Users.Controller
             var existingUser = await _userService.UpdateUser(id,user);
             if (existingUser == null)
             {
+                _logger.Information("User update failed - User not found - UserId: {UserId}", id);
+
                 return NotFound();
             }
+            _logger.Information("User updated - UserId: {UserId}", id);
+
             return Ok();
         }
 
@@ -79,20 +86,27 @@ namespace IB_projekat.Users.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            _logger.Information("Korisnik je primio kurac u dupe");
+            _logger.Information("User login attempt - Email: {Email}", model.Username);
+
             if (! await _recaptchaVerifier.VerifyRecaptcha(model.RecaptchaToken))
             {
+                _logger.Information("Recaptcha verification failed for user login - Email: {Email}", model.Username);
+
                 return BadRequest("Recaptcha is not valid!");
             }
 
             if (!ModelState.IsValid)
             {
+                _logger.Warning("Login Failed Because of invalid ModelState: {Email}", model.Username);
+
                 return BadRequest(ModelState);
             }
             
             var passwordStatus = await _userService.Authenticate(model.Username, model.Password);
             if (passwordStatus == PasswordStatus.INACTIVE)
             {
+                _logger.Warning("Login failed because password is invalid: {Email}", model.Username);
+
                 return Unauthorized();
             }
             User user = await _userService.GetByEmail(model.Username);
@@ -100,6 +114,8 @@ namespace IB_projekat.Users.Controller
             {
                 PasswordResetToken token = await _passwordResetTokenService.GenerateToken(user.Id);
                 string redirectUrl = "http://localhost:3000/reset-password?id=" + user.Id + "&token=" + token.Token;
+                _logger.Information("Login successful but needs password change: {Email}", model.Username);
+
                 return Ok(new { redirectUrl });
                 
             }
@@ -113,10 +129,14 @@ namespace IB_projekat.Users.Controller
             };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
+            if (user.Role == UserType.Unauthorized) {
+                _logger.Warning("Login failed email not verified: {Email}", model.Username);
+            return Unauthorized("Email not verified");
+            }
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
+            _logger.Information("Login successful: {Email}", model.Username);
             
             return Ok(user);
         }
@@ -128,6 +148,7 @@ namespace IB_projekat.Users.Controller
         [HttpGet("/api/user/google-login")]
         public IActionResult GoogleLogin()
         {
+            _logger.Information("User OAuth login attempt");
 
             string url = Url.Action("GoogleResponse");
 
@@ -167,10 +188,14 @@ namespace IB_projekat.Users.Controller
                     await HttpContext.SignInAsync(
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity));
+                    _logger.Information("OAuth login successful!: {Email}", email);
+
                     return Redirect("http://localhost:3000/home");
                 }
                 else
                 {
+                    _logger.Warning("OAuth Login failed, because email is already registered with different method!: {Email}", email);
+
                     return BadRequest("Email already registered with a different method!");
                 }
             }
@@ -190,6 +215,8 @@ namespace IB_projekat.Users.Controller
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(claimsIdentity));
+                _logger.Information("OAuth registration successful!: {Email}", email);
+
                 return Redirect("http://localhost:3000/home");
             }
            
@@ -199,12 +226,18 @@ namespace IB_projekat.Users.Controller
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public IActionResult GetAuthorizedData()
         {
-            // Only users with the Authorized or Admin role can access this action
+
             var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            _logger.Information("Authorized data request - UserEmail: {UserEmail}", User.FindFirstValue(ClaimTypes.Name));
+
             if (User.FindFirstValue("TwoFactorVerified") == "false")
             {
+                _logger.Information("Access denied - Two-factor authentication not verified - UserEmail: {UserEmail}", User.FindFirstValue(ClaimTypes.Name));
+
                 return Forbid();
             }
+            _logger.Information("Access granted - Authorized data retrieved - UserEmail: {UserEmail}", User.FindFirstValue(ClaimTypes.Name));
+
             return Ok(userEmail);
         }
 
@@ -212,12 +245,15 @@ namespace IB_projekat.Users.Controller
         [HttpPut("activate/{id}/{token}")]
         public async Task<IActionResult> ActivateUserAsync(int id, string token)
         {
+            _logger.Information("Activating user - UserId: {UserId}, Token: {Token}", id, token);
 
             User user = await _userService.GetById(id);
             if (user == null)
             {
+                _logger.Warning("User not found - UserId: {UserId}", id);
                 return NotFound();
             }
+
             List<ActivationToken> activationTokens = await _activationTokenService.getTokenByUserId(id);
             var validTokenFound = false;
             foreach (var activationToken in activationTokens)
@@ -230,6 +266,8 @@ namespace IB_projekat.Users.Controller
             }
             if (!validTokenFound)
             {
+                _logger.Warning("Invalid or expired activation token - UserId: {UserId}", id);
+
                 foreach (var activationToken in activationTokens)
                 {
                     await _activationTokenService.RemoveToken(activationToken);
@@ -249,14 +287,20 @@ namespace IB_projekat.Users.Controller
                 await _activationTokenService.RemoveToken(activationToken);
             }
 
+            _logger.Information("User activated successfully - UserId: {UserId}", id);
+
             return Ok();
         }
+
         [HttpPost("2fa/activate/{code}")]
         public async Task<IActionResult> Activate2fa(string code)
         {
+            _logger.Information("Activating 2FA - Code: {Code}", code);
+
             SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValueAndType(code, VerificationType.TWO_FACTOR);
             if (smsVerificationCode == null)
             {
+                _logger.Warning("SMS verification code not found - Code: {Code}", code);
                 return NotFound();
             }
 
@@ -264,6 +308,7 @@ namespace IB_projekat.Users.Controller
             if (user == null)
             {
                 await _smsVerificationService.DeleteCode(smsVerificationCode);
+                _logger.Warning("User not found - UserId: {UserId}", smsVerificationCode.UserId);
                 return NotFound();
             }
 
@@ -279,17 +324,16 @@ namespace IB_projekat.Users.Controller
             }
             if (!validTokenFound)
             {
+                _logger.Warning("Invalid or expired SMS activation token - Code: {Code}", code);
+
                 foreach (var smsCode in smsCodes)
                 {
                     await _smsVerificationService.DeleteCode(smsCode);
                 }
 
-                
-                return BadRequest("Invalid or expired sms activation token");
+                return BadRequest("Invalid or expired SMS activation token");
             }
 
-           
-            
             foreach (var smsCode in smsCodes)
             {
                 await _smsVerificationService.DeleteCode(smsCode);
@@ -308,20 +352,24 @@ namespace IB_projekat.Users.Controller
 
             await HttpContext.SignInAsync(claimsPrincipal);
 
-           
+            _logger.Information("2FA activated successfully - Code: {Code}", code);
+
             return Ok();
         }
 
-       
 
 
 
-            [HttpPost("activateSms/{code}")]
+
+        [HttpPost("activateSms/{code}")]
         public async Task<IActionResult> ActivateUserSms(string code)
         {
-            SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValueAndType(code,VerificationType.VERIFICATION);
+            _logger.Information("Activating user via SMS - Code: {Code}", code);
+
+            SmsVerificationCode smsVerificationCode = _smsVerificationService.GetCodeByCodeValueAndType(code, VerificationType.VERIFICATION);
             if (smsVerificationCode == null)
             {
+                _logger.Warning("SMS verification code not found - Code: {Code}", code);
                 return NotFound();
             }
 
@@ -329,6 +377,7 @@ namespace IB_projekat.Users.Controller
             if (user == null)
             {
                 await _smsVerificationService.DeleteCode(smsVerificationCode);
+                _logger.Warning("User not found - UserId: {UserId}", smsVerificationCode.UserId);
                 return NotFound();
             }
 
@@ -344,13 +393,15 @@ namespace IB_projekat.Users.Controller
             }
             if (!validTokenFound)
             {
+                _logger.Warning("Invalid or expired SMS activation token - Code: {Code}", code);
+
                 foreach (var smsCode in smsCodes)
                 {
                     await _smsVerificationService.DeleteCode(smsCode);
                 }
 
                 await _userService.DeleteUser(user.Id);
-                return BadRequest("Invalid or expired sms activation token");
+                return BadRequest("Invalid or expired SMS activation token");
             }
 
             // Activate the user account
@@ -363,24 +414,32 @@ namespace IB_projekat.Users.Controller
                 await _smsVerificationService.DeleteCode(smsCode);
             }
 
+            _logger.Information("User activated via SMS successfully - Email: {UserId}", user.Email);
+
             return Ok();
         }
 
         [HttpPost("forgotpassword")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPassword)
         {
+            _logger.Information("Forgot password request - Email: {Email}", forgotPassword.Email);
+
             if (!await _recaptchaVerifier.VerifyRecaptcha(forgotPassword.RecaptchaToken))
             {
+                _logger.Warning("Recaptcha is not valid for forgot password request - Email: {Email}", forgotPassword.Email);
                 return BadRequest("Recaptcha is not valid!");
             }
+
             if (!ModelState.IsValid)
             {
+                _logger.Warning("Invalid model state for forgot password request - Email: {Email}", forgotPassword.Email);
                 return BadRequest();
             }
 
             var user = await _userService.GetByEmail(forgotPassword.Email);
             if (user == null)
             {
+                _logger.Warning("User not found for forgot password request - Email: {Email}", forgotPassword.Email);
                 return NotFound();
             }
 
@@ -390,83 +449,123 @@ namespace IB_projekat.Users.Controller
 
                 await _userService.SendPasswordResetEmail(user, token);
 
+                _logger.Information("Password reset email sent successfully - Email: {Email}", forgotPassword.Email);
+
                 return Ok();
             }
             else
             {
+                _logger.Warning("User is already registered with a different method - Email: {Email}", forgotPassword.Email);
                 return BadRequest("User is already registered with a different method!");
             }
         }
 
+
         [HttpPost("logout")]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
-        public async Task<IActionResult> Logout()       
+        public async Task<IActionResult> Logout()
         {
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
+            _logger.Information("Logout request - User: {UserEmail}", userEmail);
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            _logger.Information("User logged out successfully - User: {UserEmail}", userEmail);
+
             return Ok();
         }
 
         [HttpPost("verify-password-reset-token/{token}")]
         public async Task<IActionResult> VerifyPasswordResetToken(string token)
         {
+            _logger.Information("Password reset token verification request - Token: {Token}", token);
+
             var passwordResetToken = await _passwordResetTokenService.GetTokenByToken(token);
 
             if (passwordResetToken == null)
             {
+                _logger.Warning("Invalid password reset token - Token: {Token}", token);
                 return NotFound();
             }
 
             if (passwordResetToken.ExpirationDate < DateTime.Now)
             {
                 await _passwordResetTokenService.DeleteToken(passwordResetToken);
+
+                _logger.Warning("Expired password reset token - Token: {Token}", token);
                 return BadRequest("The password reset token has expired.");
             }
 
+            _logger.Information("Valid password reset token - Token: {Token}", token);
             return Ok("The password reset token is valid.");
         }
+
 
         [HttpPost("email")]
         public async Task<User> GetByEmail([FromBody] UserEmailDTO userEmailDTO)
         {
+            _logger.Information("Get user by email request - Email: {Email}", userEmailDTO.email);
+
             User user = await _userService.GetByEmail(userEmailDTO.email);
+
+            if (user != null)
+            {
+                _logger.Information("User found - Email: {Email}", userEmailDTO.email);
+            }
+            else
+            {
+                _logger.Warning("User not found - Email: {Email}", userEmailDTO.email);
+            }
+
             return user;
         }
-        
 
         [HttpPost("2fa/{type}")]
         public async Task<IActionResult> TwoFactorAuthentication(string type)
         {
-
             string email = User.FindFirstValue(ClaimTypes.Name);
+
+            _logger.Information("Two-factor authentication request - Email: {Email}, Type: {Type}", email, type);
+
+            bool twofa = false;
+
             if (type == "email")
             {
-                bool twofa = await _userService.TwoFactorAuthentication(email);
+                twofa = await _userService.TwoFactorAuthentication(email);
             }
             else
             {
-                bool twofa = await _userService.TwoFactorAuthenticationSMS(email);
+                twofa = await _userService.TwoFactorAuthenticationSMS(email);
             }
+
+            _logger.Information("Two-factor authentication completed - Email: {Email}, Type: {Type}, Result: {Result}", email, type, twofa);
 
             return Ok();
         }
 
 
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword(ResetPasswordDTO model)
         {
+            _logger.Information("Reset password request - ID: {Id}", model.Id);
+
             if (!await _recaptchaVerifier.VerifyRecaptcha(model.RecaptchaToken))
             {
+                _logger.Warning("Recaptcha is not valid - ID: {Id}", model.Id);
                 return BadRequest("Recaptcha is not valid!");
             }
 
             if (!ModelState.IsValid)
             {
+                _logger.Warning("Invalid model state - ID: {Id}", model.Id);
                 return BadRequest(ModelState);
             }
 
             var user = await _userService.GetById(model.Id);
             if (user == null)
             {
+                _logger.Warning("Invalid password reset - User not found - ID: {Id}", model.Id);
                 return NotFound("Password reset is invalid");
             }
 
@@ -474,26 +573,30 @@ namespace IB_projekat.Users.Controller
 
             if (passwordResetToken == null)
             {
+                _logger.Warning("Invalid password reset - Token not found - ID: {Id}", model.Id);
                 return NotFound();
             }
 
             if (passwordResetToken.ExpirationDate < DateTime.Now)
             {
+                _logger.Warning("Invalid password reset - Token expired - ID: {Id}", model.Id);
                 await _passwordResetTokenService.DeleteToken(passwordResetToken);
                 return BadRequest("The password reset token has expired.");
             }
-            bool succes = await _userService.ResetUserPassword(user.Id, user, model.NewPassword);
-            if (!succes) 
+
+            bool success = await _userService.ResetUserPassword(user.Id, user, model.NewPassword);
+            if (!success)
             {
+                _logger.Warning("Failed to reset password - ID: {Id}", model.Id);
                 return BadRequest("You cannot use the same password!");
             }
 
             await _passwordResetTokenService.DeleteToken(passwordResetToken);
-            
-            
 
+            _logger.Information("Password reset successful - ID: {Id}", model.Id);
             return Ok("Password reset successfully.");
         }
+
     }
 
 }
