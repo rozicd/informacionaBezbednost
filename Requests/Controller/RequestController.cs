@@ -16,9 +16,9 @@ namespace IB_projekat.Requests.Controller
     {
         private readonly IRequestService _requestService;
         private readonly RecaptchaVerifier _recaptchaVerifier;
-        private readonly ILogger _logger;
+        private readonly Serilog.ILogger _logger;
 
-        public RequestController(IRequestService requestService, ILogger logger)
+        public RequestController(IRequestService requestService, Serilog.ILogger logger)
         {
             _requestService = requestService;
             _recaptchaVerifier = new RecaptchaVerifier(Environment.GetEnvironmentVariable("BACK_RECAPTCHA"));

@@ -15,9 +15,9 @@ namespace IB_projekat.Certificates.Controller
     public class CertificateController : ControllerBase
     {
         private readonly ICertificateService _certificateService;
-        private readonly ILogger _logger;
+        private readonly Serilog.ILogger _logger;
 
-        public CertificateController(ILogger logger, ICertificateService certificateService)
+        public CertificateController(Serilog.ILogger logger, ICertificateService certificateService)
         {
             _logger = logger;
             _certificateService = certificateService;
