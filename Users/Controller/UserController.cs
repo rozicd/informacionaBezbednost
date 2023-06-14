@@ -17,7 +17,6 @@ using IB_projekat.tools;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Cors;
-
 namespace IB_projekat.Users.Controller
 {
     [ApiController]
@@ -29,9 +28,11 @@ namespace IB_projekat.Users.Controller
         private readonly ISmsVerificationService _smsVerificationService;
         private readonly IPasswordResetTokenService _passwordResetTokenService;
         private readonly RecaptchaVerifier _recaptchaVerifier;
+        private readonly Serilog.ILogger _logger;
 
-        public UserController(IUserService userService, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService, IPasswordResetTokenService passwordResetTokenService)
+        public UserController(Serilog.ILogger loger,IUserService userService, IActivationTokenService activationTokenService, ISmsVerificationService smsVerificationService, IPasswordResetTokenService passwordResetTokenService)
         {
+            _logger = loger;
             _userService = userService;
             _activationTokenService = activationTokenService;
             _smsVerificationService = smsVerificationService;
@@ -46,6 +47,7 @@ namespace IB_projekat.Users.Controller
         {
             if (!await _recaptchaVerifier.VerifyRecaptcha(user.RecaptchaToken))
             {
+                _logger.Warning("Recaptcha verification failed for user registration: {Email}", user.Email);
                 return BadRequest("Recaptcha is not valid!");
             }
 
@@ -77,6 +79,7 @@ namespace IB_projekat.Users.Controller
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
+            _logger.Information("Korisnik je primio kurac u dupe");
             if (! await _recaptchaVerifier.VerifyRecaptcha(model.RecaptchaToken))
             {
                 return BadRequest("Recaptcha is not valid!");
@@ -86,7 +89,7 @@ namespace IB_projekat.Users.Controller
             {
                 return BadRequest(ModelState);
             }
-
+            
             var passwordStatus = await _userService.Authenticate(model.Username, model.Password);
             if (passwordStatus == PasswordStatus.INACTIVE)
             {
@@ -98,6 +101,7 @@ namespace IB_projekat.Users.Controller
                 PasswordResetToken token = await _passwordResetTokenService.GenerateToken(user.Id);
                 string redirectUrl = "http://localhost:3000/reset-password?id=" + user.Id + "&token=" + token.Token;
                 return Ok(new { redirectUrl });
+                
             }
 
 
@@ -113,7 +117,7 @@ namespace IB_projekat.Users.Controller
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
-
+            
             return Ok(user);
         }
 
