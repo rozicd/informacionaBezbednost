@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 import React, { useState } from 'react';
-import {SignIn} from '../services/authService'
+import {SignIn, googleLogin} from '../services/authService'
 import ReCAPTCHA, { GoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 export default function LoginPage() {
@@ -31,7 +31,7 @@ export default function LoginPage() {
           setErrorMessage('Username or password is not correct!');
         }
         else if(error.response.status == 400){
-          setErrorMessage(error.response.data)
+          setErrorMessage("Not all fields are filled in!")
         }
         else{
         setErrorMessage('An error occurred. Please try again later.');
@@ -50,6 +50,12 @@ export default function LoginPage() {
   const handleRecaptchaChange = (event) => {
     console.log(event)
     setRecaptcha(event);
+  };
+
+  const handleGoogleClick =  (event) => {
+    window.location.href = "http://localhost:8000/api/user/google-login";
+
+
   };
   const recaptchaComp = React.useMemo( () => <GoogleReCaptcha onVerify={handleRecaptchaChange} refreshReCaptcha={refreshRecaptcha} />, [refreshRecaptcha] );
 
@@ -85,6 +91,9 @@ export default function LoginPage() {
                 Register
                 </button>
             </Link>
+            <button type="button" className='btn' onClick={handleGoogleClick}>
+                Google
+              </button>
           </div>
 
         </form>
