@@ -68,6 +68,18 @@ async function activateSms(code)
     return response.data
 }
 
+async function googleCallback(code){
+  const response = await axios.post('http://localhost:8000/api/user/google-callback?code='+code)
+  return response.data
+}
+
+ async function googleLogin()
+  {
+    const response = await axios.get('http://localhost:8000/api/user/google-login')
+    return response.data
+  }
+
+
 
 
 async function SendTwoFactorCode()
@@ -112,4 +124,4 @@ async function checkResetPasswordToken(token)
   const response = await axios.post(`http://localhost:8000/api/user/verify-password-reset-token/${token}`);
   return response.data;
 }
-export { SendTwoFactorCodeSMS,ActivateTwoFactorCode,SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken, GetUserByEmail,SendTwoFactorCode};
+export {googleCallback, googleLogin,SendTwoFactorCodeSMS,ActivateTwoFactorCode,SignIn, checkCookieValidity, Register, activateAccount,logOut,activateSms,SendResetMail,resetPassword,checkResetPasswordToken, GetUserByEmail,SendTwoFactorCode};

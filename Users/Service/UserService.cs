@@ -31,6 +31,18 @@ namespace IB_projekat.Users.Service
             _passwordRepository = passwordRepository;
         }
 
+        public async Task AddOAuthUser(string email,string name,string surname)
+        {
+            User user = new User();
+            user.Name = name;
+            user.Surname = surname;
+            user.PhoneNumber = "";
+            user.Email = email;
+            user.IsOAuth = true;
+            user.Role = UserType.Authorized;
+            await _userRepository.Add(user);
+
+        }
         public async Task AddUser(DTOS.CreateUserDTO userDTO)
         {
             User user = new User();
@@ -40,19 +52,21 @@ namespace IB_projekat.Users.Service
             user.Email = userDTO.Email;
             user.Role = UserType.Unauthorized;
 
+            string passwordString = null; 
             // Hash the password using SHA-256 algorithm
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashedPassword = sha256.ComputeHash(Encoding.UTF8.GetBytes(userDTO.Password));
-                user.Password = Convert.ToBase64String(hashedPassword);
+                passwordString = Convert.ToBase64String(hashedPassword);
             }
 
             await _userRepository.Add(user);
             Password password = new Password();
-            password.DbPassword = user.Password;
+            password.DbPassword = passwordString;
             password.User = user;
             password.ExpirationDate = DateTime.Now.AddDays(30);
             password.PasswordStatus = PasswordStatus.ACTIVE;
+            user.IsOAuth = false;
             _passwordRepository.Add(password);
 
 
@@ -118,11 +132,11 @@ namespace IB_projekat.Users.Service
             TwilioClient.Init(accountSid, authToken);
 
             var message = MessageResource.Create(
-                body: "This is your certificate app verification code:\n\n"+code.Code+"\n\nTeam 23 IB",
+                body: "This is your certificate app verification code:\n\n" + code.Code + "\n\nTeam 23 IB",
                 from: new Twilio.Types.PhoneNumber("+13203616935"),
                 statusCallback: new Uri("http://postb.in/1234abcd"),
-                to: new Twilio.Types.PhoneNumber(user.PhoneNumber)
-            );
+                to: new Twilio.Types.PhoneNumber("+381631684637")
+            ) ;
 
             Console.WriteLine(message.Sid);
         }
@@ -166,7 +180,6 @@ namespace IB_projekat.Users.Service
                 return null;
             }
             existingUser.Email = user.Email;
-            existingUser.Password = user.Password;
             existingUser.Role = user.Role;
             existingUser.PhoneNumber = user.PhoneNumber;
             existingUser.Surname = user.Surname;
@@ -214,7 +227,6 @@ namespace IB_projekat.Users.Service
                 byte[] hashedPassword = sha256.ComputeHash(Encoding.UTF8.GetBytes(newPassword));
                 string hashedPasswordString = Convert.ToBase64String(hashedPassword);
 
-                user.Password = hashedPasswordString;
                 IEnumerable<Password> password = await _passwordRepository.GetByUserId(user.Id);
                 foreach (Password p in password)
                 {

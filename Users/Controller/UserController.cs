@@ -15,6 +15,8 @@ using IB_projekat.PasswordResetTokens.Service;
 using IB_projekat.PasswordResetTokens.Model;
 using IB_projekat.tools;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Cors;
 
 namespace IB_projekat.Users.Controller
 {
@@ -116,6 +118,79 @@ namespace IB_projekat.Users.Controller
         }
 
 
+
+
+        [Microsoft.AspNetCore.Authorization.AllowAnonymous]
+        [HttpGet("/api/user/google-login")]
+        public IActionResult GoogleLogin()
+        {
+
+            string url = Url.Action("GoogleResponse");
+
+            var properties = new AuthenticationProperties{ RedirectUri = "http://localhost:8000/api/user/google-response" };
+
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("/api/user/google-response")]
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                // Handle authentication failure
+                return RedirectToAction("GoogleLogin");
+            }
+
+            string email = User.FindFirstValue(ClaimTypes.Email);
+            string name = User.FindFirstValue(ClaimTypes.GivenName);
+            string surname = User.FindFirstValue(ClaimTypes.Surname);
+
+            if (await _userService.UserExists(email))
+            {
+                User user = await _userService.GetByEmail(email);
+                if (user.IsOAuth)
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Email.ToString()),
+                        new Claim(ClaimTypes.Role, user.Role.ToString()),
+                        new Claim("TwoFactorVerified", "true")
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity));
+                    return Redirect("http://localhost:3000/home");
+                }
+                else
+                {
+                    return BadRequest("Email already registered with a different method!");
+                }
+            }
+            else
+            {
+
+                await _userService.AddOAuthUser(email, name, surname);
+                var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, email),
+                        new Claim(ClaimTypes.Role, UserType.Authorized.ToString()),
+                        new Claim("TwoFactorVerified", "true")
+                    };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+                return Redirect("http://localhost:3000/home");
+            }
+           
+
+        }
         [HttpGet("authorized")]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public IActionResult GetAuthorizedData()
@@ -294,31 +369,34 @@ namespace IB_projekat.Users.Controller
             {
                 return BadRequest("Recaptcha is not valid!");
             }
-            // Validate the input
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            // Check if the email address is associated with a user
             var user = await _userService.GetByEmail(forgotPassword.Email);
             if (user == null)
             {
                 return NotFound();
             }
 
-            // Generate a password reset token and store it in the user record
-            var token = await _passwordResetTokenService.GenerateToken(user.Id);
+            if (!user.IsOAuth)
+            {
+                var token = await _passwordResetTokenService.GenerateToken(user.Id);
 
-            // Send the password reset link to the user's email
-            await _userService.SendPasswordResetEmail(user, token);
+                await _userService.SendPasswordResetEmail(user, token);
 
-            return Ok();
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("User is already registered with a different method!");
+            }
         }
 
         [HttpPost("logout")]
         [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout()       
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Ok();
@@ -352,7 +430,6 @@ namespace IB_projekat.Users.Controller
         
 
         [HttpPost("2fa/{type}")]
-        [Authorize(Policy ="AuthorizedOnly")]
         public async Task<IActionResult> TwoFactorAuthentication(string type)
         {
 

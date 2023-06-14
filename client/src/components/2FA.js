@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SMSVerification.css';
-import {activateSms, ActivateTwoFactorCode, SendTwoFactorCode, SendTwoFactorCodeSMS} from '../services/authService'
+import {activateSms, ActivateTwoFactorCode, SendTwoFactorCode, SendTwoFactorCodeSMS,logOut} from '../services/authService'
 
 export default function TwoFactorAuthentication() {
     const [code, setCode] = useState('');
@@ -59,14 +59,15 @@ export default function TwoFactorAuthentication() {
     };
 
 
-    const handleBackClick = () => {
-        navigate('/login');
-    };
+    const handleBackClick = async () => {
+        await logOut();
+        window.location.reload();
+        };
 
     return (
         <div className='container'>
             <main className='card'>
-                <h1 className='card-header'>SMS Verification</h1>
+                <h1 className='card-header'>Two Factor Authentification</h1>
                 <div className="padding-20">
 
                     <form onSubmit={handleSubmit} className='form'>

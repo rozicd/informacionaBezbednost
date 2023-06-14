@@ -16,10 +16,6 @@ namespace IB_projekat.Users.Repository
             _users = context.Set<T>();
         }
 
-        public async Task<T> GetByEmailAndPassword(string email, string password)
-        {
-            return await _users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
-        }
 
         public async Task<T> GetById(int id)
         {
