@@ -3,21 +3,15 @@ using IB_projekat.Certificates.Repository;
 using IB_projekat.Requests.Model.Repository;
 using IB_projekat.Users.Model;
 using IB_projekat.Users.Repository;
-using Serilog;
-using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.IO;
+using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace IB_projekat.Certificates.Service
 {
     public class CertificateService : ICertificateService
     {
-        private readonly ILogger _logger;
         private readonly ICertificateRepository _certificateRepository;
         private readonly IRequestRepository _requestRepository;
         private readonly IUserRepository<User> _userRepository;
@@ -30,8 +24,9 @@ namespace IB_projekat.Certificates.Service
         private string keyDir = "keys";
         private RSA currentRSA;
         private Certificate issuer;
+        private ILogger<CertificateService> _logger;
 
-        public CertificateService(ICertificateRepository certificateRepository, IUserRepository<User> userRepository, IRequestRepository requestRepository, ILogger logger)
+        public CertificateService(ICertificateRepository certificateRepository, IUserRepository<User> userRepository, IRequestRepository requestRepository, ILogger<CertificateService> logger)
         {
             _userRepository = userRepository;
             _requestRepository = requestRepository;
@@ -41,11 +36,13 @@ namespace IB_projekat.Certificates.Service
 
         public async Task<IEnumerable<Certificate>> GetAll()
         {
+            _logger.LogInformation("Getting all certificates");
             return await _certificateRepository.GetAll();
         }
 
         public async Task<Certificate> IssueCertificate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo, CertificateType type)
         {
+            _logger.LogInformation("Issuing certificate");
             await Validate(issuerSN, user, keyUsageFlags, validTo);
             var cert = GenerateCertificate();
 
@@ -55,8 +52,7 @@ namespace IB_projekat.Certificates.Service
 
         private async Task Validate(string? issuerSN, User user, string keyUsageFlags, DateTime validTo)
         {
-            _logger.Information("Certificate validation started.");
-
+            _logger.LogInformation("Validating certificate request");
             if (!string.IsNullOrEmpty(issuerSN))
             {
                 issuer = await _certificateRepository.GetBySerialNumber(issuerSN);
@@ -68,7 +64,6 @@ namespace IB_projekat.Certificates.Service
                     issuerCertificate = issuerCertificate.CopyWithPrivateKey(rsa);
                 }
             }
-
             if (!string.IsNullOrEmpty(issuerSN))
             {
                 while (validTo > issuerCertificate.NotAfter)
@@ -78,22 +73,19 @@ namespace IB_projekat.Certificates.Service
 
                 if (!(validTo > DateTime.Now))
                 {
-                    _logger.Warning("The provided validTo date {validTo} is not in the accepted range");
+                    _logger.LogError("The date is not in the accepted range");
                     throw new Exception("The date is not in the accepted range");
                 }
             }
-
             this.validTo = validTo;
+
             subject = user;
             flags = ParseFlags(keyUsageFlags);
-
-            _logger.Information("Certificate validation successful.");
         }
 
         private X509Certificate2 GenerateCertificate()
         {
-            _logger.Information("Generating certificate.");
-
+            _logger.LogInformation("Generating certificate");
             var subjectText = $"CN={subject.Email}";
             currentRSA = RSA.Create(4096);
 
@@ -103,18 +95,15 @@ namespace IB_projekat.Certificates.Service
             certificateRequest.CertificateExtensions.Add(new X509KeyUsageExtension(flags, false));
 
             var generatedCertificate = issuerCertificate == null
-                ? certificateRequest.CreateSelfSigned(DateTime.Now, validTo)
-                : certificateRequest.Create(issuerCertificate, DateTime.Now, validTo, Guid.NewGuid().ToByteArray());
-
-            _logger.Information("Certificate generation successful.");
-
+                    ? certificateRequest.CreateSelfSigned(DateTime.Now, validTo)
+                    : certificateRequest.Create(issuerCertificate, DateTime.Now, validTo,
+                        Guid.NewGuid().ToByteArray());
             return generatedCertificate;
         }
 
         private async Task<Certificate> ExportGeneratedCertificate(X509Certificate2 cert, CertificateType type)
         {
-            _logger.Information("Exporting generated certificate files.");
-
+            _logger.LogInformation("Exporting generated certificate");
             var certificateForDb = new Certificate()
             {
                 Issuer = issuer?.SerialNumber,
@@ -131,18 +120,14 @@ namespace IB_projekat.Certificates.Service
             {
                 File.WriteAllBytes($"{certDir}/{certificateForDb.SerialNumber}.crt", cert.Export(X509ContentType.Cert));
                 File.WriteAllBytes($"{keyDir}/{certificateForDb.SerialNumber}.key", currentRSA.ExportRSAPrivateKey());
-
-                _logger.Information("Generated certificate files exported successfully.");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error while exporting generated certificate files.");
+                _logger.LogError(ex, "Error exporting certificate");
                 Console.WriteLine(ex);
             }
 
             await _certificateRepository.Add(certificateForDb);
-
-            _logger.Information("Generated certificate added to the database.");
 
             return certificateForDb;
         }
@@ -154,9 +139,10 @@ namespace IB_projekat.Certificates.Service
 
         private X509KeyUsageFlags ParseFlags(string keyUsageFlags)
         {
+            _logger.LogInformation("Parsing key usage flags");
             if (string.IsNullOrEmpty(keyUsageFlags))
             {
-                _logger.Warning("KeyUsageFlags are mandatory");
+                _logger.LogError("KeyUsageFlags are mandatory");
                 throw new Exception("KeyUsageFlags are mandatory");
             }
 
@@ -180,7 +166,7 @@ namespace IB_projekat.Certificates.Service
                 }
                 else
                 {
-                    _logger.Warning($"Unknown flag: {flag}");
+                    _logger.LogError($"Unknown flag: {flag}");
                     throw new Exception($"Unknown flag: {flag}");
                 }
             }
@@ -190,20 +176,13 @@ namespace IB_projekat.Certificates.Service
 
         public async Task<bool> ValidateCert(string serialNumber)
         {
-            _logger.Information("Validating certificate with serial number {serialNumber}.", serialNumber);
-
+            _logger.LogInformation("Validating certificate by serial number");
             Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
             if (certDB == null)
             {
                 return false;
             }
-
-            if (certDB.Status != CertificateStatus.Valid)
-            {
-                _logger.Information("Certificate with serial number {serialNumber} is not in a valid status.", serialNumber);
-                return false;
-            }
-
+            if (certDB.Status != CertificateStatus.Valid) return false;
             X509Certificate2 cert;
             using (RSA rsa = RSA.Create())
             {
@@ -216,28 +195,114 @@ namespace IB_projekat.Certificates.Service
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error(ex, "Error while validating certificate files.");
+                    _logger.LogError(ex, "Error validating certificate");
                     return false;
                 }
             }
 
             if (!certDB.CertificateType.Equals(CertificateType.Root))
             {
-                if (await ValidateCert(certDB.Issuer) == false)
+                if (ValidateCert(certDB.Issuer).Result == false) return false; ;
+            }
+
+            if (!(cert.NotAfter > DateTime.Now))
+            {
+                return false;
+            }
+            if (!(cert.NotBefore < DateTime.Now))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> ValidateCertFile(X509Certificate2 cert)
+        {
+            _logger.LogInformation("Validating certificate file");
+            Console.WriteLine(cert.SerialNumber);
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(cert.SerialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            if (certDB.Status != CertificateStatus.Valid) return false;
+            using (RSA rsa = RSA.Create())
+            {
+                try
                 {
-                    _logger.Information("Certificate issuer with serial number {serialNumber} is not valid.", certDB.Issuer);
+                    rsa.ImportRSAPrivateKey(File.ReadAllBytes($"{keyDir}/{cert.SerialNumber}.key"), out _);
+                    RSA publicKey = cert.GetRSAPublicKey();
+                    cert = cert.CopyWithPrivateKey(rsa);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error validating certificate file");
                     return false;
                 }
             }
 
-            if (certDB.ValidFrom > DateTime.Now || certDB.ValidTo < DateTime.Now)
+            if (!certDB.CertificateType.Equals(CertificateType.Root))
             {
-                _logger.Information("Certificate with serial number {serialNumber} is not valid in the current time range.", serialNumber);
+                if (ValidateCert(certDB.Issuer).Result == false) return false; ;
+            }
+
+            if (!(cert.NotAfter > DateTime.Now))
+            {
+                return false;
+            }
+            if (!(cert.NotBefore < DateTime.Now))
+            {
                 return false;
             }
 
-            _logger.Information("Certificate with serial number {serialNumber} is valid.", serialNumber);
             return true;
+        }
+
+        public async Task<Certificate> GetCertificateBySerialNumber(string serialNumber)
+        {
+            _logger.LogInformation("Getting certificate by serial number");
+            return await _certificateRepository.GetBySerialNumber(serialNumber);
+        }
+
+        public async Task<bool> RevokeCert(string serialNumber, string userEmail)
+        {
+            _logger.LogInformation("Revoking certificate");
+            Console.WriteLine(serialNumber);
+            Certificate certDB = await _certificateRepository.GetBySerialNumber(serialNumber);
+            if (certDB == null)
+            {
+                return false;
+            }
+            if (userEmail != null)
+            {
+                User user = await _userRepository.GetByEmail(userEmail);
+                if (!user.Role.Equals(UserType.Admin))
+                    if (!user.Email.Equals(certDB.User.Email))
+                        return false;
+            }
+            List<Certificate> issuedCertificates = new List<Certificate>();
+            try
+            {
+                issuedCertificates = (List<Certificate>)await _certificateRepository.GetAllIssued(serialNumber);
+            }
+            catch
+            {
+                Console.WriteLine("no More");
+            }
+            foreach (Certificate cert in issuedCertificates)
+            {
+                await RevokeCert(cert.SerialNumber, null);
+            }
+            certDB.Status = CertificateStatus.Revoked;
+            await _certificateRepository.Update(certDB);
+            return true;
+        }
+
+        public async Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize)
+        {
+            _logger.LogInformation("Getting all certificates paginated");
+            return await _certificateRepository.GetAllCertificatesPaginated(page, pageSize);
         }
     }
 }
