@@ -4,6 +4,7 @@ using IB_projekat.PaginatedResponseModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
@@ -14,8 +15,11 @@ namespace IB_projekat.Certificates.Controller
     public class CertificateController : ControllerBase
     {
         private readonly ICertificateService _certificateService;
-        public CertificateController(ICertificateService certificateService)
+        private readonly Serilog.ILogger _logger;
+
+        public CertificateController(Serilog.ILogger logger, ICertificateService certificateService)
         {
+            _logger = logger;
             _certificateService = certificateService;
         }
 
@@ -29,9 +33,12 @@ namespace IB_projekat.Certificates.Controller
         [Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> DownloadCertificate(string serialNumber)
         {
+            _logger.Information("Certificate download requested - Serial Number: {SerialNumber}", serialNumber);
+
             Certificate cert = await _certificateService.GetCertificateBySerialNumber(serialNumber);
             if (cert == null)
             {
+                _logger.Warning("Certificate not found - Serial Number: {SerialNumber}", serialNumber);
                 return BadRequest("No such certificate exists");
             }
 
@@ -39,6 +46,7 @@ namespace IB_projekat.Certificates.Controller
             string certFilePath = $"certs/{serialNumber}.crt";
             if (!System.IO.File.Exists(certFilePath))
             {
+                _logger.Warning("Certificate file not found - Serial Number: {SerialNumber}", serialNumber);
                 return BadRequest("Certificate not found");
             }
 
@@ -49,20 +57,26 @@ namespace IB_projekat.Certificates.Controller
                 FileDownloadName = $"{serialNumber}.crt"
             };
         }
-
+        [Authorize(Policy = "AuthorizedOnly")]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<Certificate>>> GetAllCertificatesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
+            _logger.Information("Get all certificates paginated - Page: {Page}, PageSize: {PageSize}", page, pageSize);
+
             var certificates = await _certificateService.GetAllCertificatesPaginated(page, pageSize);
             var total = certificates.Count();
             var response = new PaginationResponse<Certificate>(certificates, page, pageSize, total);
+
+            _logger.Information("Returned paginated certificates - Total: {Total}", total);
             return Ok(response);
         }
-        [Authorize(Policy = "AuthorizedOnly")]
 
+        [Authorize(Policy = "AuthorizedOnly")]
         [HttpGet("validate/{serialNumber}")]
         public async Task<bool> ValidateCert(string serialNumber)
         {
+            _logger.Information("Certificate validation requested - Serial Number: {SerialNumber}", serialNumber);
+
             return await _certificateService.ValidateCert(serialNumber);
         }
 
@@ -70,9 +84,11 @@ namespace IB_projekat.Certificates.Controller
         [HttpPost("validate")]
         public async Task<IActionResult> ValidateCertFile([FromBody] byte[] certificateBytes)
         {
+            _logger.Information("Certificate file validation requested");
+
             X509Certificate2 certificate = new X509Certificate2(certificateBytes);
 
-             return Ok(await _certificateService.ValidateCertFile(certificate));
+            return Ok(await _certificateService.ValidateCertFile(certificate));
         }
 
         [HttpDelete("revoke/{serialNumber}")]
@@ -80,12 +96,9 @@ namespace IB_projekat.Certificates.Controller
         public async Task<bool> RevokeCertFile(string serialNumber)
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Name);
-            Console.WriteLine(userEmail);
+            _logger.Information("Certificate revocation requested - Serial Number: {SerialNumber}, User Email: {UserEmail}", serialNumber, userEmail);
 
             return await _certificateService.RevokeCert(serialNumber, userEmail);
         }
-
-
-
     }
 }
