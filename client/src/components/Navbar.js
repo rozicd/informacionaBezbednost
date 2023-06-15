@@ -16,6 +16,7 @@ function Navbar({ role }) {
       console.log(data);
       window.location.reload()      
     } catch (error) {
+      window.location.reload()
       console.error(error);
     }
   }

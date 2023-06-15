@@ -4,8 +4,7 @@
     "IB_projekat": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "/api/weatherforecast",
+      "launchBrowser": false,
       "applicationUrl": "http://localhost:8000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

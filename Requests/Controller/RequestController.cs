@@ -26,6 +26,7 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPost]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> AddRequest(RequestDTO requestDTO)
         {
             if (!await _recaptchaVerifier.VerifyRecaptcha(requestDTO.RecaptchaToken))
@@ -34,7 +35,7 @@ namespace IB_projekat.Requests.Controller
                 return BadRequest("Recaptcha is not valid!");
             }
 
-            if (requestDTO.SignitureSerialNumber == null && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
+            if (requestDTO.SignitureSerialNumber == "" && requestDTO.CertificateType != Certificates.Model.CertificateType.Root)
             {
                 _logger.Warning("Certificate needs to be signed by a serial number!!");
                 return BadRequest("Certificate needs to be signed by a serial number!!");
@@ -60,6 +61,7 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPut("accept/{certId}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> AcceptRequest(int certId)
         {
             try
@@ -76,6 +78,7 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPut("decline/{certId}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> DeclineRequest(int certId)
         {
             try
@@ -92,6 +95,7 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpGet("{userId}")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<ActionResult<PaginationResponse<Request>>> GetByUserId(int userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -108,6 +112,7 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpGet("all")]
+        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<ActionResult<PaginationResponse<Request>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
