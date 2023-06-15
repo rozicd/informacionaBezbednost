@@ -29,24 +29,41 @@ async function RevokeCert(serialNumber) {
 
 async function DownloadCert(serialNumber) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/download/${serialNumber}`, {
-        responseType: 'blob',
-        withCredentials: true,
-      });
-  
-      // Create a link element and click it to trigger download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${serialNumber}.crt`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        const response = await axios.get(`${API_BASE_URL}/download/${serialNumber}`, {
+            responseType: 'blob',
+            withCredentials: true,
+        });
+
+        const contentType = response.headers['content-type'];
+
+        if (contentType === 'application/x-x509-ca-cert') {
+            // Single certificate file
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${serialNumber}.crt`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else if (contentType === 'application/zip') {
+            // Zip file containing certificate and key
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${serialNumber}.zip`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            // Handle unsupported file type or other error
+            console.error('Unsupported file type:', contentType);
+            // Handle error here
+        }
     } catch (error) {
-      console.error(error);
-      // Handle error here
+        console.error(error);
+        // Handle error here
     }
-  }
+}
 async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags,recaptcha){
     console.log(certificateType)
     console.log(signatureSerialNumber)

@@ -22,7 +22,10 @@ function Verify() {
                 const response = await VerifyCert(data)
                 setVerificationStatus(response ? 'valid' : 'invalid');
             } catch (error) {
-                console.error(error);
+                console.error(error.response.status == 400)
+                {
+                    setVerificationStatus("Unsupported file type")
+                };
             }
         };
 
