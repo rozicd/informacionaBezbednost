@@ -25,8 +25,6 @@ export default function LoginPage() {
         window.location.reload()
       }
       } catch (error) {
-        console.log(error);
-        console.log("XD")
         if(error.response.status == 401){
           setErrorMessage('Username or password is not correct!');
         }

@@ -20,20 +20,24 @@ export default function RegisterPage() {
     event.preventDefault();
     setRefreshRecaptcha(r => !r);
     try {
-      const response = await Register(email, name, surname, password, phoneNumber,verificationMethod,recaptcha);
-      window.alert("SUCCESSFULY REGISTERED")
-        navigate('/login')
-        setErrorMessage('');
+      const response = await Register(email, name, surname, password, phoneNumber, verificationMethod, recaptcha);
+      window.alert("SUCCESSFULLY REGISTERED");
+      navigate('/login');
+      setErrorMessage('');
     } catch (error) {
       console.error(error);
-      if(error.response.status == 409){
+      if (error.response.status === 409) {
         setErrorMessage('Email already exists');
-      }
-      else if(error.response.status == 400){
-        setErrorMessage('Not all fields are filled in')
-      }
-      else{
-      setErrorMessage('An error occurred. Please try again later.');
+      } else if (error.response.status === 400) {
+        if (error.response.data.errors) {
+          const fieldErrors = error.response.data.errors;
+          const errorMessages = Object.values(fieldErrors).flat();
+          setErrorMessage(errorMessages[0]);
+        } else {
+          setErrorMessage('Not all fields are filled in');
+        }
+      } else {
+        setErrorMessage('An error occurred. Please try again later.');
       }
     }
   };

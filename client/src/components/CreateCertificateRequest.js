@@ -60,8 +60,9 @@ function CreateCertificateRequest() {
         setErrorMessage(error.response.data);
       }
       else{
-        setErrorMessage("Not all fields are filled in!");
-      }
+        const fieldErrors = error.response.data.errors;
+        const errorMessages = Object.values(fieldErrors).flat();
+        setErrorMessage(errorMessages[0]);      }
     }
   };
 

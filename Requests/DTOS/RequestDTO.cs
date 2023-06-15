@@ -6,6 +6,31 @@ namespace IB_projekat.Certificates.DTOS
 {
     public class RequestDTO
     {
+        public class ValidFlagsAttribute : ValidationAttribute
+        {
+            protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+            {
+                if (value != null)
+                {
+                    string flags = value.ToString();
+                    string[] flagValues = flags.Split(',');
+
+                    foreach (string flagValue in flagValues)
+                    {
+                        if (!int.TryParse(flagValue, out int flag))
+                        {
+                            return new ValidationResult("Invalid flag value format. Must be 'number,number,number'.");
+                        }
+                    }
+
+                    return ValidationResult.Success;
+                }
+
+                return new ValidationResult("Flags field is required.");
+            }
+        }
+
+
         [Required]
         public CertificateType CertificateType { get; set; }
 
@@ -13,7 +38,8 @@ namespace IB_projekat.Certificates.DTOS
         
         [Required]
         public int UserId { get; set; }
-        [Required]
+
+        [ValidFlags]
         public string Flags { get; set; }
 
         [Required]

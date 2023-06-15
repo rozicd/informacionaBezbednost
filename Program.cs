@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
 {
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;");
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;");
     options.UseLoggerFactory(LoggerFactory.Create(builder => builder.ClearProviders()));
 }, ServiceLifetime.Transient);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
