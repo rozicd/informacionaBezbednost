@@ -3,6 +3,7 @@ using IB_projekat.PaginatedResponseModel;
 using IB_projekat.Requests.Model;
 using IB_projekat.Requests.Service;
 using IB_projekat.tools;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -26,7 +27,6 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPost]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> AddRequest(RequestDTO requestDTO)
         {
             if (!await _recaptchaVerifier.VerifyRecaptcha(requestDTO.RecaptchaToken))
@@ -61,7 +61,6 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPut("accept/{certId}")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> AcceptRequest(int certId)
         {
             try
@@ -78,7 +77,6 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpPut("decline/{certId}")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> DeclineRequest(int certId)
         {
             try
@@ -94,8 +92,8 @@ namespace IB_projekat.Requests.Controller
             }
         }
 
+
         [HttpGet("{userId}")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<ActionResult<PaginationResponse<Request>>> GetByUserId(int userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -112,7 +110,6 @@ namespace IB_projekat.Requests.Controller
         }
 
         [HttpGet("all")]
-        [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthorizedOnly")]
         public async Task<ActionResult<PaginationResponse<Request>>> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try

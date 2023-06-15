@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.IO.Compression;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
@@ -33,6 +34,7 @@ namespace IB_projekat.Certificates.Controller
         [Authorize(Policy = "AuthorizedOnly")]
         public async Task<IActionResult> DownloadCertificate(string serialNumber)
         {
+            var userEmail = User.FindFirstValue(ClaimTypes.Name);
             _logger.Information("Certificate download requested - Serial Number: {SerialNumber}", serialNumber);
 
             Certificate cert = await _certificateService.GetCertificateBySerialNumber(serialNumber);
@@ -42,21 +44,46 @@ namespace IB_projekat.Certificates.Controller
                 return BadRequest("No such certificate exists");
             }
 
-            // Find the certificate file
             string certFilePath = $"certs/{serialNumber}.crt";
+            string keyFilePath = $"keys/{serialNumber}.key";
             if (!System.IO.File.Exists(certFilePath))
             {
                 _logger.Warning("Certificate file not found - Serial Number: {SerialNumber}", serialNumber);
                 return BadRequest("Certificate not found");
             }
 
-            // Return the certificate file as a response
-            FileStream fileStream = new FileStream(certFilePath, FileMode.Open, FileAccess.Read);
-            return new FileStreamResult(fileStream, "application/x-x509-ca-cert")
+            FileStream certFileStream = new FileStream(certFilePath, FileMode.Open, FileAccess.Read);
+            FileStream keyFileStream = new FileStream(keyFilePath, FileMode.Open, FileAccess.Read);
+
+            if (userEmail == cert.User.Email) {
+                var archiveStream = new MemoryStream();
+                using (var archive = new ZipArchive(archiveStream, ZipArchiveMode.Create, true))
+                {
+                    var certEntry = archive.CreateEntry($"{serialNumber}.crt", CompressionLevel.Optimal);
+                    using (var certEntryStream = certEntry.Open())
+                    {
+                        await certFileStream.CopyToAsync(certEntryStream);
+                    }
+
+                    var keyEntry = archive.CreateEntry($"{serialNumber}.key", CompressionLevel.Optimal);
+                    using (var keyEntryStream = keyEntry.Open())
+                    {
+                        await keyFileStream.CopyToAsync(keyEntryStream);
+                    }
+                }
+                
+
+                archiveStream.Position = 0;
+                return File(archiveStream, "application/zip", $"{serialNumber}.zip");
+
+            }
+            return new FileStreamResult(certFileStream, "application/x-x509-ca-cert")
             {
                 FileDownloadName = $"{serialNumber}.crt"
             };
         }
+
+
         [Authorize(Policy = "AuthorizedOnly")]
         [HttpGet]
         public async Task<ActionResult<PaginationResponse<Certificate>>> GetAllCertificatesPaginated([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
@@ -85,8 +112,18 @@ namespace IB_projekat.Certificates.Controller
         public async Task<IActionResult> ValidateCertFile([FromBody] byte[] certificateBytes)
         {
             _logger.Information("Certificate file validation requested");
+            X509Certificate2 certificate;
+            try
+            {
 
-            X509Certificate2 certificate = new X509Certificate2(certificateBytes);
+                 certificate = new X509Certificate2(certificateBytes);
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning("Certificate verification filed , unsupported file type");
+
+                return BadRequest("Unsupported file type");
+            }
 
             return Ok(await _certificateService.ValidateCertFile(certificate));
         }
