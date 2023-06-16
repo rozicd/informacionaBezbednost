@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<IB_projekat.DatabaseContext>(options =>
 {
-    options.UseNpgsql("Server=localhost;Database=IB;User Id=ognje;Password=admin;");
+    options.UseNpgsql("Server=localhost;Database=IB;User Id=erdel;Password=admin;");
     options.UseLoggerFactory(LoggerFactory.Create(builder => builder.ClearProviders()));
 }, ServiceLifetime.Transient);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -107,7 +107,7 @@ builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.C
         };
         options.Cookie.SameSite = SameSiteMode.None;
         options.SlidingExpiration = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Set Secure flag
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 
         options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
     }).AddGoogle(options =>
@@ -153,7 +153,6 @@ builder.Services.AddControllers(options =>
     options.InputFormatters.Insert(0, new CustomMediaTypeInputFormatter("application/x-x509-ca-cert"));
     options.OutputFormatters.Insert(0, new CustomMediaTypeOutputFormatter("application/x-x509-ca-cert"));
 });
-
 
 
 var app = builder.Build();

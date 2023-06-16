@@ -10,21 +10,21 @@ async function getAllRequest(page) {
   }
 
   async function getUsersRequest(id, page) {
-    const response = await axios.get(`${API_BASE_URL}/${id}?page=${page}`, {
+    const response = await axios.get(`${API_BASE_URL}/${id}?page=${page}`,{
       withCredentials: true
     });
     return response.data;
   }
 
   async function acceptRequest(cerId) {
-    const response = await axios.put(`${API_BASE_URL}/accept/${cerId}`, {
+    const response = await axios.put(`${API_BASE_URL}/accept/${cerId}`,{},  {
       withCredentials: true
     });
     return response;
   }
 
   async function declineRequest(cerId) {
-    const response = await axios.put(`${API_BASE_URL}/decline/${cerId}`, {
+    const response = await axios.put(`${API_BASE_URL}/decline/${cerId}`,{},  {
       withCredentials: true
     });
     return response;

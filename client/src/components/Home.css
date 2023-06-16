@@ -13,9 +13,12 @@
   height: fit-content;
   position: relative;
 }
-
+.home-content{
+  height:80vh;
+}
 .out-card-div
 {
+  height: 100%;
   padding: 10px;
   padding: 10px;
   display: flex;

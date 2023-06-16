@@ -76,7 +76,7 @@ async function AddCertRequest(certificateType,signatureSerialNumber,userId,flags
         userId,
         flags,
         "RecaptchaToken":recaptcha
-    }, {
+    }, {      withCredentials: true,
         headers: {
             'Content-Type': 'application/json'
         }

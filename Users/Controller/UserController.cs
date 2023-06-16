@@ -470,6 +470,7 @@ namespace IB_projekat.Users.Controller
 
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
+
             _logger.Information("User logged out successfully - User: {UserEmail}", userEmail);
 
             return Ok();
