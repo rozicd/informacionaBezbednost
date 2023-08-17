@@ -1,0 +1,33 @@
+.fieldset{
+    display:flex;
+    flex-direction: row;
+    padding: 5px;
+}
+
+.cert-create-label{
+    width:200px;
+}
+
+.cert-create-input{
+    width:230px;
+}
+
+.cert-create-select{
+    width:238px;
+}
+.center-option-cert-create{
+    display:flex;
+    justify-content: center;
+}
+.cert-create-buttons{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top:10px;
+}
+.error-message{
+    color:red;
+    margin:20px;
+    text-align: center;
+}

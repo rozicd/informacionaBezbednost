@@ -1,0 +1,15 @@
+.center-list{
+    height:100%;
+    display:flex;
+    flex-direction: column;
+
+}
+.center-list>div{
+    align-self: center;
+}
+.center-list>a{
+    align-self: center;
+}
+.top-margin-button{
+    margin:20px;
+}

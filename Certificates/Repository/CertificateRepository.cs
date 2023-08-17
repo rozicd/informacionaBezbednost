@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace IB_projekat.Certificates.Repository
 {
     public class CertificateRepository : ICertificateRepository
     {
         private readonly DatabaseContext _context;
+        private readonly DbSet<Certificate> _certs;
 
         public CertificateRepository(DatabaseContext context)
         {
             _context = context;
+            _certs = context.Set<Certificate>();
         }
 
         public Certificate GetById(int id)
@@ -18,37 +22,62 @@ namespace IB_projekat.Certificates.Repository
             return _context.Certificates.FirstOrDefault(c => c.Id == id);
         }
 
-        public IEnumerable<Certificate> GetAll()
+        public async Task<IEnumerable<Certificate>> GetAll()
         {
-            return _context.Certificates.ToList();
+            return await  _context.Certificates.ToListAsync();
         }
 
-        public IEnumerable<Certificate> GetAllEndCertificates()
+        public async Task<IEnumerable<Certificate>> GetAllEndCertificates()
         {
-            return _context.Certificates.Where(c => c.CertificateType == CertificateType.End).ToList();
+            return await _context.Certificates.Where(c => c.CertificateType == CertificateType.End).ToListAsync();
         }
 
-        public IEnumerable<Certificate> GetAllIntermediateCertificates()
+        public async Task<IEnumerable<Certificate>> GetAllIntermediateCertificates()
         {
-            return _context.Certificates.Where(c => c.CertificateType == CertificateType.Intermediate).ToList();
+            return await _context.Certificates.Where(c => c.CertificateType == CertificateType.Intermediate).ToListAsync();
         }
 
-        public void Add(Certificate certificate)
+        public async Task Add(Certificate certificate)
         {
-            _context.Certificates.Add(certificate);
-            _context.SaveChanges();
+            var user = await _context.Users.FindAsync(certificate.User.Id); 
+            certificate.User = _context.Entry(user).IsKeySet ? user : _context.Users.Attach(user).Entity;
+            await _context.Certificates.AddAsync(certificate);
+            await _context.SaveChangesAsync();
+
         }
 
-        public void Update(Certificate certificate)
+        public async Task Update(Certificate certificate)
         {
             _context.Certificates.Update(certificate);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(Certificate certificate)
+        public async Task Delete(Certificate certificate)
         {
             _context.Certificates.Remove(certificate);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Certificate> GetBySerialNumber(string serialNumber)
+        {
+            return await _context.Certificates.Include(c => c.User).FirstOrDefaultAsync(c => c.SerialNumber == serialNumber);
+        }
+        public async Task<IEnumerable<Certificate>> GetAllIssued(string serialNumber)
+        {
+            var certificates = await _context.Certificates
+                .Where(c => c.Issuer == serialNumber)
+                .ToListAsync();
+
+            return certificates;
+        }
+
+        public async Task<List<Certificate>> GetAllCertificatesPaginated(int page, int pageSize)
+        {
+            return await _context.Certificates
+                .Include(c => c.User)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
     }
 }

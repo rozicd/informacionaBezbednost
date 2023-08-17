@@ -22,6 +22,33 @@ namespace IB_projekat.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("IB_projekat.ActivationTokens.Model.ActivationToken", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("expires")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("hash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("userId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("value")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("id");
+
+                    b.ToTable("ActivationTokens");
+                });
+
             modelBuilder.Entity("IB_projekat.Certificates.Model.Certificate", b =>
                 {
                     b.Property<int>("Id")
@@ -30,14 +57,10 @@ namespace IB_projekat.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AuthenticatedUserId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CertificateType")
                         .HasColumnType("integer");
 
                     b.Property<string>("Issuer")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("SerialNumber")
@@ -51,17 +74,129 @@ namespace IB_projekat.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("ValidTo")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthenticatedUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Certificates");
+                });
+
+            modelBuilder.Entity("IB_projekat.PasswordResetTokens.Model.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("passwordResetTokens");
+                });
+
+            modelBuilder.Entity("IB_projekat.Requests.Model.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CertificateType")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Flags")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SignitureSerialNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Requests");
+                });
+
+            modelBuilder.Entity("IB_projekat.SmsVerification.Model.SmsVerificationCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SmsVerificationCodes");
+                });
+
+            modelBuilder.Entity("IB_projekat.Users.Model.Password", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DbPassword")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("PasswordStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("passwords");
                 });
 
             modelBuilder.Entity("IB_projekat.Users.Model.User", b =>
@@ -76,11 +211,10 @@ namespace IB_projekat.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<bool>("IsOAuth")
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -88,54 +222,49 @@ namespace IB_projekat.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Surname")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("UserType")
+                    b.Property<string>("Surname")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-
-                    b.HasDiscriminator<string>("UserType").HasValue("User");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.AuthenticatedUser", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.User");
-
-                    b.HasDiscriminator().HasValue("Authorized");
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.UnauthenticatedUser", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.User");
-
-                    b.HasDiscriminator().HasValue("Unauthorized");
-                });
-
-            modelBuilder.Entity("IB_projekat.Users.Model.Admin", b =>
-                {
-                    b.HasBaseType("IB_projekat.Users.Model.AuthenticatedUser");
-
-                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("IB_projekat.Certificates.Model.Certificate", b =>
                 {
-                    b.HasOne("IB_projekat.Users.Model.AuthenticatedUser", null)
-                        .WithMany("Certificates")
-                        .HasForeignKey("AuthenticatedUserId");
+                    b.HasOne("IB_projekat.Users.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("IB_projekat.Users.Model.AuthenticatedUser", b =>
+            modelBuilder.Entity("IB_projekat.Requests.Model.Request", b =>
                 {
-                    b.Navigation("Certificates");
+                    b.HasOne("IB_projekat.Users.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("IB_projekat.Users.Model.Password", b =>
+                {
+                    b.HasOne("IB_projekat.Users.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

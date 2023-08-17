@@ -1,0 +1,163 @@
+.home-container {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+.home-div
+{
+
+  width: 100%;
+  height: fit-content;
+  position: relative;
+}
+.home-content{
+  height:80vh;
+}
+.out-card-div
+{
+  height: 100%;
+  padding: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.size80
+{
+  position:relative;
+  width: 1150px;
+  height: fit-content;
+  min-height: 50%;
+
+}
+
+  .home-title{
+    margin-bottom:30px;
+  }
+
+  .home-navbar {
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 65px;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+
+  }
+
+  .home-navbar h1 {
+    margin: 0;
+  }
+
+  .home-navbar button {
+    height: 100%;
+  }
+
+  .home-navbar .menu {
+    height: 100%;
+  }
+  .home-navbar .menu button{
+    height: 100%;
+  }
+
+  .home-main {
+    background-color: #c0c0c0;
+    border: 5px solid #008080;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #a0a0a0;
+    padding: 50px;
+    padding-left:70px;
+    padding-right:70px;
+    text-align: center;
+  }
+
+  .home-center{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-top:20px;
+  }
+
+  .home-logo {
+    margin-bottom: 20px;
+    width: 200px;
+  }
+
+  .home-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .home-fieldset {
+    display:flex;
+    margin-top:10px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .home-label {
+    color: #000;
+    font-size: 17px;
+    margin-right: 10px;
+    text-align: left;
+    width: 80px;
+  }
+
+  .home-input {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #000;
+    font-size: 17px;
+    padding: 3px;
+    width: 200px;
+  }
+
+  .home-button {
+    background-color: #008080;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 3px 5px;
+    height:35px;
+    transition: background-color 0.2s ease-in-out;
+    width: 70px;
+  }
+
+  .home-register-button {
+    background-color: #008080;
+    border: 1px solid #000;
+    border-radius: 3px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    height:35px;
+    padding: 5px;
+    width: 70px;
+    font-family: Arial, sans-serif;
+  }
+
+  .home-button:hover {
+    background-color: #006060;
+  }
+
+  .home-register-button:hover {
+    background-color: #006060;
+  }
+
+.logout-btn
+{position: absolute;
+top : 0px;
+right: 0;
+margin: 5px;}
